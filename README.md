@@ -7,6 +7,7 @@ To add later
 
 # Required Inputs
 Two videos, one for each speaker. Works best when the camera is in front of the speaker, instead of from an angle.
+Verbatim Transcript from YouTube.
 
 # User Interface
 Text menu based for easy configuration.
@@ -20,7 +21,8 @@ Prosody
 - Vokaturi
 
 ## Coarse Narratives
-IBM Watson
+Demographics
+- IBM Watson
 
 
 # Pipeline (Intermediate Artifacts)
