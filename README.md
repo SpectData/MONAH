@@ -12,7 +12,16 @@ Two videos, one for each speaker. Works best when the camera is in front of the 
 Text menu based for easy configuration.
 
 # Dependencies (Technology Stack)
-To add later
+To add as we build this repo up.
+## Fine Narratives
+Actions
+- OpenFace
+Prosody
+- Vokaturi
+
+## Coarse Narratives
+IBM Watson
+
 
 # Pipeline (Intermediate Artifacts)
 To add later
@@ -21,4 +30,5 @@ To add later
 To add later
 
 # Continuous Integration
-To add later
+Joshua to add PyLint Python Style Tests
+Joshua to add Compulsory Unit Tests
