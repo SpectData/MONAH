@@ -2,12 +2,15 @@
 This script runs open face to all the videos
 '''
 import os
+
 import pandas as pd
-import data.secrets.parallel_run_settings_secret as prs
+
+import Python.Data_Preprocessing.Stage_1.Audio_files_manipulation.copy_mp4_files as cmf
+import Python.Data_Preprocessing.Stage_1.OpenFace.check_video_length as cvl
 import Python.Data_Preprocessing.Stage_1.OpenFace.download_avi as da
 import Python.Data_Preprocessing.Stage_1.OpenFace.openface_cli as ofc
-import Python.Data_Preprocessing.Stage_1.OpenFace.check_video_length as cvl
-import Python.Data_Preprocessing.Stage_1.Audio_files_manipulation.copy_mp4_files as cmf
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def run_open_face(video_name_1, video_name_2):
     '''

@@ -1,15 +1,18 @@
 '''
 This script extracts the vokaturi features of the audio file
 '''
+import glob
 import os
 import sys
-import glob
+
 import pandas as pd
-from tqdm import tqdm
 import scipy.io.wavfile
-import Python.Data_Preprocessing.config.config as cfg
-import data.secrets.parallel_run_settings_secret as prs
+from tqdm import tqdm
+
 import Python.Data_Preprocessing.Stage_1.Vokaturi.cut_wav_file as cwf
+import Python.Data_Preprocessing.config.config as cfg
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def insert_df(emotions_df, dest_dir):
     '''

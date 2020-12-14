@@ -2,12 +2,14 @@
 This script creates a summary table of all action features of a video
 '''
 import os
-import numpy as np
+
 import pandas as pd
-import data.secrets.parallel_run_settings_secret as prs
-import Python.Data_Preprocessing.Stage_2.Actions.talkturn_smile as sml
-import Python.Data_Preprocessing.Stage_2.Actions.talkturn_posiface as psf
+
 import Python.Data_Preprocessing.Stage_2.Actions.talkturn_au_actions as aua
+import Python.Data_Preprocessing.Stage_2.Actions.talkturn_posiface as psf
+import Python.Data_Preprocessing.Stage_2.Actions.talkturn_smile as sml
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def combine_actions_features(video_name_1, video_name_2):
     '''

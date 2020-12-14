@@ -3,8 +3,10 @@ This script prepares the session-level transcript for au actions
 '''
 
 import os
+
 import pandas as pd
-import data.secrets.parallel_run_settings_secret as prs
+
+import Python.Data_Preprocessing.config.dir_config as prs
 
 pd.__version__
 
@@ -12,8 +14,8 @@ import Python.Data_Preprocessing.config.config as cfg
 
 from tqdm import tqdm
 
-def z_score_per_dev_fold(df, col_name):
 
+def z_score_per_dev_fold(df, col_name):
     # for loop
     df_result = pd.DataFrame(columns=["Video_ID", col_name +'_z'])
     df_train = df

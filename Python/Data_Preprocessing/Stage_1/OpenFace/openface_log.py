@@ -3,9 +3,12 @@ This script logs the changes done in each video file during open face implementa
 '''
 
 import os
+
 import pandas as pd
-import data.secrets.parallel_run_settings_secret as prs
+
 import Python.Data_Preprocessing.Stage_1.Audio_files_manipulation.copy_mp4_files as cmf
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def update_row(src_dir, video_id, column_name):
     '''

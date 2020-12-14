@@ -3,8 +3,11 @@ This script uploads wav files to be analyzed to google cloud
 '''
 
 import os
+
 from google.cloud import storage
-import data.secrets.parallel_run_settings_secret as prs
+
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def upload_blob(bucket_name, destination_blob_name):
     '''

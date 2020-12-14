@@ -1,9 +1,11 @@
 '''
 This script extracts the audio recording from the video file and stores it in a wav file
 '''
-import os
 import logging
-import data.secrets.parallel_run_settings_secret as prs
+import os
+
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def run_extracting_audio():
     '''

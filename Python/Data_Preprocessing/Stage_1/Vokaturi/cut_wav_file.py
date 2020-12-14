@@ -2,13 +2,16 @@
 This script cuts the audio file into smaller wav file of talkturns
 '''
 
-import os
 import datetime
+import os
+
 import numpy as np
 import pandas as pd
 from pydub import AudioSegment
+
 import Python.Data_Preprocessing.config.config as cfg
-import data.secrets.parallel_run_settings_secret as prs
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def convert(n_sec):
     '''

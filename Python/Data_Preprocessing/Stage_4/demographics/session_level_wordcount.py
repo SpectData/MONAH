@@ -2,12 +2,14 @@
 Generates word count data by session and speaker
 '''
 
-# Load libraries
-import pandas as pd
 import logging
 import os
-import numpy as np
-import data.secrets.parallel_run_settings_secret as prs
+
+# Load libraries
+import pandas as pd
+
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def run_dataframe(video_name_1, video_name_2):
     '''
@@ -16,7 +18,7 @@ def run_dataframe(video_name_1, video_name_2):
     '''
     parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     raw_data = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                    video_name_1 + '_' + video_name_2,
+                                        video_name_1 + '_' + video_name_2,
                                     'Stage_2',
                                     'weaved talkturns.csv'))
     data = raw_data.groupby(['video_id', 'speaker'])['text'].apply(' '.join).reset_index()

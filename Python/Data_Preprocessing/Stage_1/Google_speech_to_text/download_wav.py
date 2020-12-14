@@ -3,7 +3,9 @@ This script returns a list of wav files to be analyzed
 '''
 
 import os
-import data.secrets.parallel_run_settings_secret as prs
+
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def download_audio(video_name_1, video_name_2):
     '''

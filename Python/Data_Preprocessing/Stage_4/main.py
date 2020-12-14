@@ -3,12 +3,15 @@ Main manager for formulating session-level transcript
 '''
 
 import os
+
 import pandas as pd
-import data.secrets.parallel_run_settings_secret as prs
-import Python.Data_Preprocessing.Stage_4.create_directories as cdi
+
 import Python.Data_Preprocessing.Stage_4.actions.session_action_parent as sap
-import Python.Data_Preprocessing.Stage_4.prosody.session_prosody_parent as spp
+import Python.Data_Preprocessing.Stage_4.create_directories as cdi
 import Python.Data_Preprocessing.Stage_4.demographics.session_demographics_parent as sdp
+import Python.Data_Preprocessing.Stage_4.prosody.session_prosody_parent as spp
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def weave_session_level_transcript(video_name_1,
                                    video_name_2,

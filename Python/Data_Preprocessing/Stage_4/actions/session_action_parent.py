@@ -6,20 +6,13 @@ This script combines all the action session level transcript
 import pandas as pd
 
 pd.__version__
-from datetime import datetime
 
-import logging
-import sys
-import pyodbc
 import os
-import numpy as np
-
-from tqdm import tqdm
 
 import Python.Data_Preprocessing.Stage_4.actions.session_action_posiface as sap
 import Python.Data_Preprocessing.Stage_4.actions.session_action_smile as sas
 import Python.Data_Preprocessing.Stage_4.actions.session_action_au as saa
-import data.secrets.parallel_run_settings_secret as prs
+import Python.Data_Preprocessing.config.dir_config as prs
 
 def get_actions_blob(video_name_1, video_name_2, au_action, posiface, smile):
     '''

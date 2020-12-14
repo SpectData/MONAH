@@ -3,12 +3,12 @@ This script combines all the action session level transcript
 '''
 
 # Load libraries
-import pandas as pd
 
 import os
 
 import Python.Data_Preprocessing.Stage_4.demographics.session_demographics_talkativeness as sdt
-import data.secrets.parallel_run_settings_secret as prs
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def get_demographics_blob(video_name_1, video_name_2, word_count):
     '''

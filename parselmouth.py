@@ -1,10 +1,10 @@
-import parselmouth
-
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import seaborn as sns
 
-sns.set() # Use seaborn's default style to make attractive graphs
+import parselmouth
+
+sns.set()  # Use seaborn's default style to make attractive graphs
 
 # Plot nice figures using Python's "standard" matplotlib library
 snd = parselmouth.Sound("Examples/the_north_wind_and_the_sun.wav")
@@ -12,10 +12,12 @@ snd = parselmouth.Sound("Examples/the_north_wind_and_the_sun.wav")
 pitch = snd.to_pitch()
 
 pitch_values = pitch.selected_array['frequency']
-pitch_values[pitch_values==0] = np.nan
+pitch_values[pitch_values == 0] = np.nan
 
+#################
+# Matplotlib
+#################
 plt.rcParams["figure.facecolor"] = "w"
-
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
@@ -43,10 +45,22 @@ ax.text(1.04, 50, "Sun", **style)
 
 plt.show()
 
-
 # TODO
 # Ask Marriane to push dev branch
 # Current plan is to generate png at talkturn level
 # Play button simply plays two videos, doesn't highlight
 # (or simply have a roving asterisks in a table of talkturns)
 # I will coauthor with Marriane wrt to config file. Option to generate pitch visualization
+
+#################
+# Seaborn
+#################
+
+style = dict(size=10, color='black')
+sns.set(rc={'axes.facecolor': 'white', 'figure.facecolor': 'white'})
+
+fig, axs = plt.subplots(nrows=2)
+g1 = sns.scatterplot(data=pitch_values, ax=axs[0])
+g2 = sns.scatterplot(data=pitch_values, ax=axs[1])
+axs[0].text(0.1, 50, "?The", **style)
+plt.show()

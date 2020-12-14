@@ -12,7 +12,7 @@ pd.__version__
 
 import os
 import Python.Data_Preprocessing.config.config as cfg
-import data.secrets.parallel_run_settings_secret as prs
+import Python.Data_Preprocessing.config.dir_config as prs
 import Python.Data_Preprocessing.Stage_4.demographics.session_level_wordcount as slw
 
 from tqdm import tqdm

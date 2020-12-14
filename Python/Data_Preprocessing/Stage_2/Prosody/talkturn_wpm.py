@@ -2,8 +2,11 @@
 This script computes for words per minute per talkturn of each video and speaker
 '''
 import os
+
 import pandas as pd
-import data.secrets.parallel_run_settings_secret as prs
+
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def extract_speech_rate(video_name_1, video_name_2):
     '''

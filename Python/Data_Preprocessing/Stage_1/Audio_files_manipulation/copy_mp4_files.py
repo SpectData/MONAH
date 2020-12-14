@@ -3,9 +3,12 @@ This script consolidates all the video files and return it as a list
 '''
 
 import os
+
 import pandas as pd
 from tqdm import tqdm
-import data.secrets.parallel_run_settings_secret as prs
+
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def get_local_list_files(video_name_1, video_name_2, file_format):
     '''

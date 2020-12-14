@@ -3,11 +3,14 @@ This script uses google speech to text to transcribe text from the wav files
 '''
 
 import os
+
 import pandas as pd
-import data.secrets.parallel_run_settings_secret as prs
+
 import Python.Data_Preprocessing.Stage_1.Google_speech_to_text.download_wav as dw
-import Python.Data_Preprocessing.Stage_1.Google_speech_to_text.upload_to_gcs as utg
 import Python.Data_Preprocessing.Stage_1.Google_speech_to_text.transcribe_wav_file as twf
+import Python.Data_Preprocessing.Stage_1.Google_speech_to_text.upload_to_gcs as utg
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def insert_to_table(dfr, dest_dir, table_name):
     '''

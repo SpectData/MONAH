@@ -2,7 +2,9 @@
 This script creates the needed directoriesfor session-level transcripts
 '''
 import os
-import data.secrets.parallel_run_settings_secret as prs
+
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def run_creating_directories(video_name_1, video_name_2):
     '''

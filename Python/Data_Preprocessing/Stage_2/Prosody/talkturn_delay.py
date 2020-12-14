@@ -2,9 +2,12 @@
 This script computes for delay per talkturn
 '''
 import os
+
 import numpy as np
 import pandas as pd
-import data.secrets.parallel_run_settings_secret as prs
+
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def extract_delay(video_name_1, video_name_2):
     '''

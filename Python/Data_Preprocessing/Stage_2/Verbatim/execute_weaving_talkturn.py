@@ -2,13 +2,16 @@
 This script combines the output of google speech to text into talkturns
 '''
 
-import os
 import gc
 import logging
+import os
+
 import pandas as pd
-import Python.Data_Preprocessing.config.config as cfg
-import data.secrets.parallel_run_settings_secret as prs
+
 import Python.Data_Preprocessing.Stage_1.Google_speech_to_text.execute_google_speech_to_text as gst
+import Python.Data_Preprocessing.config.config as cfg
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def run_weaving_talkturn(video_name_1, video_name_2):
     '''

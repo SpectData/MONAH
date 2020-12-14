@@ -1,15 +1,27 @@
-# MONAH
-Multi-Modal Narratives for Humans
-MONAH creates a multi-modal narrative for dyadic (two-people) video-recorded conversations by weaving _what_ is being said with _how_ its being said.
+# MONAH: Multi-Modal Narratives for Humans
+
+## Problem
+
+Analyzing videos in video format (visual + audio + text) needs a lot of human expertise and end-to-end deep learning
+methods are less interpretable.
+
+## Solution
+
+Inspired by how the linguistics community analyze conversations using the Jefferson transcription system. MONAH creates
+a multi-modal text narrative for dyadic (two-people) video-recorded conversations by weaving _what_ is being said with _
+how_ its being said.
 
 # ScreenCast
+
 To add later
 
 # Required Inputs
+
 Two videos, one for each speaker. Works best when the camera is in front of the speaker, instead of from an angle.
 Verbatim Transcript from YouTube.
 
 # User Interface
+
 Text menu based for easy configuration.
 
 ![alt text](https://lucid.app/publicSegments/view/57060778-69b4-4b96-8a6a-2fa7016d2c23/image.jpeg?raw=true)

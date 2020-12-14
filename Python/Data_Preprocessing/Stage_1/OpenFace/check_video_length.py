@@ -4,10 +4,13 @@ and the recorded original video length
 '''
 
 import os
+
 import pandas as pd
-import data.secrets.parallel_run_settings_secret as prs
+
 import Python.Data_Preprocessing.Stage_1.OpenFace.download_avi as da
 import Python.Data_Preprocessing.Stage_1.OpenFace.openface_log as ofl
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def check_videolength(video_name_1, video_name_2):
     '''

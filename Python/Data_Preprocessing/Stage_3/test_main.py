@@ -3,8 +3,11 @@ This script tests the accurateness of the main script results
 '''
 
 import os
+
 import pandas as pd
-import data.secrets.parallel_run_settings_secret as prs
+
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def talkturn_lookup(talkturn_no, family):
     '''

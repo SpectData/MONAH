@@ -2,12 +2,14 @@
 This script sets up open face loop invoke process
 '''
 
+import datetime
 import os
 import pathlib
-import datetime
-import data.secrets.parallel_run_settings_secret as prs
-import Python.Data_Preprocessing.Stage_1.OpenFace.openface_log as ofl
+
 import Python.Data_Preprocessing.Stage_1.Audio_files_manipulation.copy_mp4_files as cmf
+import Python.Data_Preprocessing.Stage_1.OpenFace.openface_log as ofl
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def invoke_openface_cli(video_full_path, video_file_name, feature_extraction_path, out_dir):
     '''

@@ -2,11 +2,14 @@
 This script creates a summary table of all prosody features of a video
 '''
 import os
+
 import numpy as np
 import pandas as pd
-import data.secrets.parallel_run_settings_secret as prs
-import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_wpm as wpm
+
 import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_delay as dly
+import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_wpm as wpm
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def get_summary_feature(table_name, column_name):
     '''

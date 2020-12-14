@@ -2,9 +2,12 @@
 This script lists all the video files to be analyzed
 '''
 import os
+
 import pandas as pd
 from moviepy.editor import VideoFileClip
-import data.secrets.parallel_run_settings_secret as prs
+
+import Python.Data_Preprocessing.config.dir_config as prs
+
 
 def get_video_duration(src_dir, video_list, dest_dir):
     '''
