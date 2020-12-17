@@ -1,6 +1,7 @@
 '''
 Weaving narrative using intermediate tables.
 '''
+import logging
 import os
 
 import pandas as pd
@@ -235,16 +236,25 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
     dfr['text_blob'] = ''
 
     for blob in ['blob_9', 'blob_1', 'blob_2', 'blob_3', 'blob_4',
-                 'blob_5','blob_6', 'blob_7', 'blob_8', 'blob_10']:
+                 'blob_5', 'blob_6', 'blob_7', 'blob_8', 'blob_10']:
         dfr['text_blob'] = dfr.apply(lambda x: x['text_blob'] + x[blob], axis=1)
 
     dfr = dfr[['audio_id', 'talkturn no', 'family', 'text_blob']]
+
+    dfr.sort_values(by=['audio_id', 'talkturn no'], inplace=True)
+
+    # Export
     dfr.to_csv(os.path.join(parallel_run_settings['csv_path'],
                             video_name_1 + '_' + video_name_2,
                             "Stage_3",
                             "narrative_fine.csv"),
                index=False)
-    print(dfr)
+
+    logger = logging.getLogger(__name__)
+
+    logger.info('Narrative Fine CSV exported')
+
+    return dfr
 
 if __name__ == '__main__':
     weave_narrative(video_name_1='Ses01F_F',
