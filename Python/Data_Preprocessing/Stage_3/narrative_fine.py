@@ -241,7 +241,11 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
 
     dfr = dfr[['audio_id', 'talkturn no', 'family', 'text_blob']]
 
+    # Running order of the conversation
     dfr.sort_values(by=['audio_id', 'talkturn no'], inplace=True)
+
+    # Quality check - ensure same number of rows
+    assert len(talkturn) == len(dfr)
 
     # Export
     dfr.to_csv(os.path.join(parallel_run_settings['csv_path'],
@@ -250,8 +254,8 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
                             "narrative_fine.csv"),
                index=False)
 
+    # Log information for user
     logger = logging.getLogger(__name__)
-
     logger.info('Narrative Fine CSV exported')
 
     return dfr
