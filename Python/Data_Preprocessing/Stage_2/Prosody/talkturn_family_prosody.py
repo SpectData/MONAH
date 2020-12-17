@@ -8,7 +8,6 @@ import pandas as pd
 
 import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_delay as dly
 import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_wpm as wpm
-import Python.Data_Preprocessing.config.dir_config as prs
 
 
 def get_summary_feature(table_name, column_name):
@@ -47,14 +46,14 @@ def normalize_column_values(table_name, column_name, summary_table):
 
     return dfr
 
-def combine_prosody_features(video_name_1, video_name_2):
+def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
     '''
     Combine normalize feature values
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
-    wpm.extract_speech_rate(video_name_1, video_name_2)
-    dly.extract_delay(video_name_1, video_name_2)
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    wpm.extract_speech_rate(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
+    dly.extract_delay(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
 
     # Load dataframes
     df_wpm = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],

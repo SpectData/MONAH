@@ -5,15 +5,13 @@ import os
 
 import pandas as pd
 
-import Python.Data_Preprocessing.config.dir_config as prs
 
-
-def extract_speech_rate(video_name_1, video_name_2):
+def extract_speech_rate(video_name_1, video_name_2, parallel_run_settings):
     '''
     Computes for speech rate per talkturn
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
 
     # Load dataframes
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],

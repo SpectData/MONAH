@@ -12,16 +12,16 @@ import os
 import Python.Data_Preprocessing.Stage_4.prosody.session_prosody_speechrate as sps
 import Python.Data_Preprocessing.Stage_4.prosody.session_prosody_delay as spd
 import Python.Data_Preprocessing.Stage_4.prosody.session_prosody_tone as spt
-import Python.Data_Preprocessing.config.dir_config as prs
 
-def get_prosody_blob(video_name_1, video_name_2, delay, wpm, tone):
+
+def get_prosody_blob(video_name_1, video_name_2, delay, wpm, tone, parallel_run_settings):
     '''
     Combining all action transcripts in one blob
     :param video_name_1:
     :param video_name_2:
     :return:
     '''
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     speechrate_blob = sps.get_all_blob(video_name_1,
                                        video_name_2)
     delay_blob = spd.get_all_blob(video_name_1,

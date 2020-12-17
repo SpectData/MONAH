@@ -7,15 +7,14 @@ import numpy as np
 import pandas as pd
 
 import Python.Data_Preprocessing.config.config as cfg
-import Python.Data_Preprocessing.config.dir_config as prs
 
 
-def compute_smile(video_name_1, video_name_2):
+def compute_smile(video_name_1, video_name_2, parallel_run_settings):
     '''
     Compute smile per talkturn
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,
                                         "Stage_2",

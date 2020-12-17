@@ -12,7 +12,6 @@ pd.__version__
 
 import os
 import Python.Data_Preprocessing.config.config as cfg
-import Python.Data_Preprocessing.config.dir_config as prs
 import Python.Data_Preprocessing.Stage_4.demographics.session_level_wordcount as slw
 
 from tqdm import tqdm
@@ -51,13 +50,13 @@ def get_z_bucket(z_series):
 
     return df
 
-def run_dataframe(video_name_1, video_name_2):
+def run_dataframe(video_name_1, video_name_2, parallel_run_settings):
     '''
     Load dataframe of summary metrics
     :return: dataframe of metrics
     '''
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
-    slw.run_computing_wordcount(video_name_1, video_name_2)
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    slw.run_computing_wordcount(video_name_1, video_name_2, parallel_run_settings)
     data = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                     video_name_1 + '_' + video_name_2,
                                     'Stage_4',
@@ -103,9 +102,10 @@ def get_blob(variable, fxn, speaker, data):
 
     return df_copy
 
-def get_all_blob(video_name_1, video_name_2):
+
+def get_all_blob(video_name_1, video_name_2, parallel_run_settings):
     # Importing connection object
-    data = run_dataframe(video_name_1, video_name_2)
+    data = run_dataframe(video_name_1, video_name_2, parallel_run_settings)
 
     talkativeness_blob = pd.DataFrame()
     speakers = [cfg.parameters_cfg['speaker_1'], cfg.parameters_cfg['speaker_2']]

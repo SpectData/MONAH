@@ -7,17 +7,15 @@ import os
 import pandas as pd
 from tqdm import tqdm
 
-import Python.Data_Preprocessing.config.dir_config as prs
 
-
-def get_local_list_files(video_name_1, video_name_2, file_format):
+def get_local_list_files(video_name_1, video_name_2, file_format, parallel_run_settings):
     '''
     List video files to be analyzed
     :param file_format:
     :param src_dir:
     :return: list of video file names
     '''
-    parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
     print('Get Local List Files', file_format)
     assert file_format in set(['avi']), 'file_format must be avi'
     full_paths = []
@@ -46,14 +44,15 @@ def get_local_list_files(video_name_1, video_name_2, file_format):
 
     return results
 
-def run_creating_directories(video_name_1, video_name_2):
+
+def run_creating_directories(video_name_1, video_name_2, parallel_run_settings):
     '''
     Create needed directories
     :param video_name_1: file 1
     :param video_name_2: file 2
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
     out_dir = os.path.join(parallel_run_settings['csv_path'],
                            video_name_1 + '_' + video_name_2)
 

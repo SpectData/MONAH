@@ -8,7 +8,6 @@ import pathlib
 
 import Python.Data_Preprocessing.Stage_1.Audio_files_manipulation.copy_mp4_files as cmf
 import Python.Data_Preprocessing.Stage_1.OpenFace.openface_log as ofl
-import Python.Data_Preprocessing.config.dir_config as prs
 
 
 def invoke_openface_cli(video_full_path, video_file_name, feature_extraction_path, out_dir):
@@ -50,17 +49,19 @@ def get_todo_files(file_info):
     '''
     return file_info
 
-def for_loop_invoke_cli(video_name_1, video_name_2):
+def for_loop_invoke_cli(video_name_1, video_name_2, parallel_run_settings):
     '''
     implement open face run
     :param parallel_run_settings: folder settings
     :param file_info: all files
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
-    file_info = cmf.get_local_list_files(video_name_1, video_name_2, file_format='avi')
+    # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    file_info = cmf.get_local_list_files(video_name_1, video_name_2, file_format='avi',
+                                         parallel_run_settings=parallel_run_settings)
+
     file_info = file_info.sort_values(by=['Video_ID'])
-    print(len(file_info), len(file_info)/2)
+    print(len(file_info), len(file_info) / 2)
 
     feature_extraction_path = parallel_run_settings['feature_extraction_path']
     out_dir = parallel_run_settings['OpenFace_CSV_Path']

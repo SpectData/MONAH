@@ -3,8 +3,10 @@ This script uses Google cloud storage to transcribe wav file
 '''
 
 import os
+
 import pandas as pd
 from google.cloud import speech_v1p1beta1 as speech
+
 
 def transcribe_gcs(bucket_name, audio_id):
     '''
@@ -20,7 +22,7 @@ def transcribe_gcs(bucket_name, audio_id):
     audio = speech.types.RecognitionAudio(uri=gcs_uri)
     config = speech.types.RecognitionConfig(
         encoding=speech.enums.RecognitionConfig.AudioEncoding.LINEAR16,
-        sample_rate_hertz=32000,
+        sample_rate_hertz=22050,
         language_code='en-US',
         enable_speaker_diarization=True,
         diarization_speaker_count=1,

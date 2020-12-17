@@ -6,8 +6,6 @@ import os
 
 import pandas as pd
 
-import Python.Data_Preprocessing.config.dir_config as prs
-
 pd.__version__
 
 import Python.Data_Preprocessing.config.config as cfg
@@ -46,16 +44,16 @@ def get_z_bucket(z_series):
 
     return df
 
-def run_dataframe(video_name_1, video_name_2):
+def run_dataframe(video_name_1, video_name_2, parallel_run_settings):
     '''
     Load dataframe of summary metrics
     :return: dataframe of metrics
     '''
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     raw_data = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                    video_name_1 + '_' + video_name_2,
-                                    'Stage_1',
-                                    'openface_raw.csv'))
+                                        video_name_1 + '_' + video_name_2,
+                                        'Stage_1',
+                                        'openface_raw.csv'))
     raw_data = raw_data[['video_id', ' timestamp', ' AU05_r', ' AU17_r', ' AU20_r', ' AU25_r']]
     talkurn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                        video_name_1 + '_' + video_name_2,

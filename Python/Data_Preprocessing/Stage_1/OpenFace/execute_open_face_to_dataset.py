@@ -9,18 +9,17 @@ import Python.Data_Preprocessing.Stage_1.Audio_files_manipulation.copy_mp4_files
 import Python.Data_Preprocessing.Stage_1.OpenFace.check_video_length as cvl
 import Python.Data_Preprocessing.Stage_1.OpenFace.download_avi as da
 import Python.Data_Preprocessing.Stage_1.OpenFace.openface_cli as ofc
-import Python.Data_Preprocessing.config.dir_config as prs
 
 
-def run_open_face(video_name_1, video_name_2):
+def run_open_face(video_name_1, video_name_2, parallel_run_settings):
     '''
     Run open face to video files
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
 
     # download videos
-    video_list = da.download_video(video_name_1, video_name_2)
+    video_list = da.download_video(video_name_1, video_name_2, parallel_run_settings)
 
     #  get video duration
     da.get_video_duration(src_dir=parallel_run_settings['avi_path'],
@@ -30,12 +29,13 @@ def run_open_face(video_name_1, video_name_2):
                                                 'Stage_1'))
 
     # run open face
-    file_info = cmf.get_local_list_files(video_name_1, video_name_2, file_format='avi')
+    file_info = cmf.get_local_list_files(video_name_1, video_name_2, file_format='avi',
+                                         parallel_run_settings=parallel_run_settings)
     file_info = file_info.sort_values(by=['Video_ID'])
-    print(len(file_info), len(file_info)/2)
-    ofc.for_loop_invoke_cli(video_name_1, video_name_2)
+    print(len(file_info), len(file_info) / 2)
+    ofc.for_loop_invoke_cli(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
     # check video duration
-    cvl.check_videolength(video_name_1, video_name_2)
+    cvl.check_videolength(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
 
     # combine open face results
     open_face_results = pd.DataFrame()

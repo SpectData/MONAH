@@ -50,14 +50,14 @@ def batch_update_csv_produced(processed_files, src_dir):
         column_name = 'CSV_produced'
         update_row(src_dir, video_id, column_name)
 
-def openface_log(src_dir, video_id, column_name):
+def openface_log(src_dir, video_id, column_name, parallel_run_settings):
     '''
     Log processes in open face execution
     :param video_id: video being analyzed
     :param column_name: column to be updated
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
 
     update_row(src_dir, video_id, column_name)
 

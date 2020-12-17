@@ -5,8 +5,6 @@ import os
 
 import pandas as pd
 
-import Python.Data_Preprocessing.config.dir_config as prs
-
 
 def num_words_lookup(num):
     d = {'num_id': [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
@@ -129,12 +127,12 @@ def smile_look_up(num):
     return df.loc[(df['lb'] <= num) & (num < df['ub']), 'text'].values[0]
 
 def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
-                    au_action, posiface, smile):
+                    au_action, posiface, smile, parallel_run_settings):
     '''
     Weaves narratives and exports csv
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
 
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,

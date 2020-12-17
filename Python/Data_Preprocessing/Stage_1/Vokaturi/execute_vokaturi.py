@@ -11,7 +11,6 @@ from tqdm import tqdm
 
 import Python.Data_Preprocessing.Stage_1.Vokaturi.cut_wav_file as cwf
 import Python.Data_Preprocessing.config.config as cfg
-import Python.Data_Preprocessing.config.dir_config as prs
 
 
 def insert_df(emotions_df, dest_dir):
@@ -23,13 +22,13 @@ def insert_df(emotions_df, dest_dir):
     emotions_df.to_csv(os.path.join(dest_dir, "talkturn_vokaturi.csv"),
                        index=False)
 
-def analyze_wav(wav_path):
+def analyze_wav(wav_path, parallel_run_settings):
     '''
     runs vokaturi to the wav file
     :param wav_path: wav file
     :return: vokaturi features dataframe
     '''
-    parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
     sys.path.append(parallel_run_settings['Vokaturi_API_Path'])
     import Vokaturi
 
@@ -76,12 +75,13 @@ def analyze_wav(wav_path):
     voice.destroy()
     return emotions
 
-def run_vokaturi(video_name_1, video_name_2):
+
+def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
     '''
     Extract vokaturi features and stores in a table
     :return: rows with no emotions
     '''
-    parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
     sys.path.append(parallel_run_settings['Vokaturi_API_Path'])
     import Vokaturi
 
@@ -89,7 +89,7 @@ def run_vokaturi(video_name_1, video_name_2):
     Vokaturi.load(parallel_run_settings['Vokaturi_Library_Path'])
     print("Analyzed by: %s" % Vokaturi.versionAndLicense())
 
-    cwf.cut_files(video_name_1, video_name_2)
+    cwf.cut_files(video_name_1, video_name_2, parallel_run_settings)
     no_emotions = []
     emotions = pd.DataFrame()
 
@@ -100,7 +100,7 @@ def run_vokaturi(video_name_1, video_name_2):
                 print(file)
                 talkturn_id_complete = file[0:-4]
                 full_path = os.path.abspath(os.path.join(root, file))
-                result = analyze_wav(full_path)
+                result = analyze_wav(full_path, parallel_run_settings=parallel_run_settings)
                 if result:
                     df_emotions = pd.DataFrame(result, index=[0])
                     df_emotions['video_id'] = talkturn_id_complete[0:

@@ -12,16 +12,16 @@ import os
 import Python.Data_Preprocessing.Stage_4.actions.session_action_posiface as sap
 import Python.Data_Preprocessing.Stage_4.actions.session_action_smile as sas
 import Python.Data_Preprocessing.Stage_4.actions.session_action_au as saa
-import Python.Data_Preprocessing.config.dir_config as prs
 
-def get_actions_blob(video_name_1, video_name_2, au_action, posiface, smile):
+
+def get_actions_blob(video_name_1, video_name_2, posiface, smile, parallel_run_settings):
     '''
     Combining all action transcripts in one blob
     :param video_name_1:
     :param video_name_2:
     :return:
     '''
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     posiface_count_blob = sap.get_all_blob(video_name_1,
                                            video_name_2)
     smiling_count_blob = sas.get_all_blob(video_name_1,

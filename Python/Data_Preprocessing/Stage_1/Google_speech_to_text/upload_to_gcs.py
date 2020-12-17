@@ -6,10 +6,8 @@ import os
 
 from google.cloud import storage
 
-import Python.Data_Preprocessing.config.dir_config as prs
 
-
-def upload_blob(bucket_name, destination_blob_name):
+def upload_blob(bucket_name, destination_blob_name, parallel_run_settings):
     '''
     Uploads a file to the bucket.
     :param bucket_name: bucket name in google cloud
@@ -17,7 +15,7 @@ def upload_blob(bucket_name, destination_blob_name):
     :param destination_blob_name: file name in google cloud
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./data/secrets/69b431b78607.json"
     storage_client = storage.Client()
     bucket = storage_client.get_bucket(bucket_name)

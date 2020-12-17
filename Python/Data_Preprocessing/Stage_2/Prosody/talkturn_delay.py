@@ -6,15 +6,13 @@ import os
 import numpy as np
 import pandas as pd
 
-import Python.Data_Preprocessing.config.dir_config as prs
 
-
-def extract_delay(video_name_1, video_name_2):
+def extract_delay(video_name_1, video_name_2, parallel_run_settings):
     '''
     Computes for the talkturn delay
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,
                                         "Stage_2",

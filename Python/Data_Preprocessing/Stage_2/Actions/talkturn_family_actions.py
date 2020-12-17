@@ -8,18 +8,17 @@ import pandas as pd
 import Python.Data_Preprocessing.Stage_2.Actions.talkturn_au_actions as aua
 import Python.Data_Preprocessing.Stage_2.Actions.talkturn_posiface as psf
 import Python.Data_Preprocessing.Stage_2.Actions.talkturn_smile as sml
-import Python.Data_Preprocessing.config.dir_config as prs
 
 
-def combine_actions_features(video_name_1, video_name_2):
+def combine_actions_features(video_name_1, video_name_2, parallel_run_settings):
     '''
     combine action features in one summary table
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
-    sml.compute_smile(video_name_1, video_name_2)
-    psf.compute_posiface(video_name_1, video_name_2)
-    aua.compute_au_actions(video_name_1, video_name_2)
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    sml.compute_smile(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
+    psf.compute_posiface(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
+    aua.compute_au_actions(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
 
     # load dataframes
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],

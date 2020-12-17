@@ -45,6 +45,14 @@ def _auto_populate_derivative_directories(parallel_run_settings):
             os.path.join(parallel_run_settings['Vokaturi_Install_Path'],
                          "lib/open/win/OpenVokaturi-3-4-win64.dll")))
 
+    # Auto create directories if not present
+    keys = ['OpenFace_CSV_Path', 'avi_path', 'wav_path', 'csv_path', 'usb_csv_path',
+            'talkturn_wav_path']
+
+    for key in keys:
+        if not os.path.exists(parallel_run_settings[key]):
+            os.makedirs(parallel_run_settings[key])
+
     return parallel_run_settings
 
 
@@ -114,7 +122,7 @@ def get_parallel_run_settings(computer_name):
         parallel_run_settings['MONAH'] = str(pathlib.Path("/mnt/S/MONAH"))
 
         parallel_run_settings['feature_extraction_path'] = str(
-            pathlib.Path("/mnt/G/Github/OpenFace"))
+            pathlib.Path("/mnt/G/Github/OpenFace/build/bin/"))
 
         parallel_run_settings['offset_multiple'] = 0
 

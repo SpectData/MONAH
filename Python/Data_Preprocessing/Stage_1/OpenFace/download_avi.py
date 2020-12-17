@@ -6,8 +6,6 @@ import os
 import pandas as pd
 from moviepy.editor import VideoFileClip
 
-import Python.Data_Preprocessing.config.dir_config as prs
-
 
 def get_video_duration(src_dir, video_list, dest_dir):
     '''
@@ -39,13 +37,13 @@ def get_video_duration(src_dir, video_list, dest_dir):
 
     print('Inserted video duration of video list')
 
-def download_video(video_name_1, video_name_2):
+def download_video(video_name_1, video_name_2, parallel_run_settings):
     '''
     Downloads local videos to be analyzed
     :return: video list
     '''
-    parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
-    video_list = [video_name_1+'.avi', video_name_2+'.avi']
+    # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    video_list = [video_name_1 + '.avi', video_name_2 + '.avi']
     get_video_duration(src_dir=parallel_run_settings['avi_path'],
                        video_list=video_list,
                        dest_dir=os.path.join(parallel_run_settings['csv_path'],

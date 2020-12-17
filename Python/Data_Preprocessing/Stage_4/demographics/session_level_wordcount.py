@@ -8,19 +8,17 @@ import os
 # Load libraries
 import pandas as pd
 
-import Python.Data_Preprocessing.config.dir_config as prs
 
-
-def run_dataframe(video_name_1, video_name_2):
+def run_dataframe(video_name_1, video_name_2, parallel_run_settings):
     '''
     Load dataframe of summary metrics
     :return: dataframe of metrics
     '''
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     raw_data = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,
-                                    'Stage_2',
-                                    'weaved talkturns.csv'))
+                                        'Stage_2',
+                                        'weaved talkturns.csv'))
     data = raw_data.groupby(['video_id', 'speaker'])['text'].apply(' '.join).reset_index()
 
     return data
@@ -86,7 +84,8 @@ def extract_session_unique_wordcount(data):
 
     return unique_wordcount_data
 
-def run_computing_wordcount(video_name_1, video_name_2):
+
+def run_computing_wordcount(video_name_1, video_name_2, parallel_run_settings):
     '''
     Computes for word count data
     :param video_name_1: video to be analyzed
@@ -94,8 +93,8 @@ def run_computing_wordcount(video_name_1, video_name_2):
     :return:
     '''
     logging.getLogger().setLevel(logging.INFO)
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
-    data = run_dataframe(video_name_1, video_name_2)
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    data = run_dataframe(video_name_1, video_name_2, parallel_run_settings)
 
     word_count = extract_session_wordcount(data)
     unique_word_count = extract_session_unique_wordcount(data)

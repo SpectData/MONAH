@@ -9,16 +9,15 @@ import pandas as pd
 
 import Python.Data_Preprocessing.Stage_1.OpenFace.download_avi as da
 import Python.Data_Preprocessing.Stage_1.OpenFace.openface_log as ofl
-import Python.Data_Preprocessing.config.dir_config as prs
 
 
-def check_videolength(video_name_1, video_name_2):
+def check_videolength(video_name_1, video_name_2, parallel_run_settings):
     '''
     Checks matching of video length
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
-    video_list = da.download_video(video_name_1, video_name_2)
+    # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    video_list = da.download_video(video_name_1, video_name_2, parallel_run_settings)
 
     column_name = 'VideoLength_checked'
     for video_id in video_list:

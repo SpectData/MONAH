@@ -3,15 +3,13 @@ This script creates the needed directoriesfor session-level transcripts
 '''
 import os
 
-import Python.Data_Preprocessing.config.dir_config as prs
 
-
-def run_creating_directories(video_name_1, video_name_2):
+def run_creating_directories(video_name_1, video_name_2, parallel_run_settings):
     '''
     Create directory for session-level transcripts
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     out_dir = os.path.join(parallel_run_settings['csv_path'],
                            video_name_1 + '_' + video_name_2,
                            'Stage_4')

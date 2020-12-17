@@ -6,8 +6,6 @@ import os
 
 import pandas as pd
 
-import Python.Data_Preprocessing.config.dir_config as prs
-
 
 def talkturn_lookup(talkturn_no, family):
     '''
@@ -67,17 +65,17 @@ def talkturn_lookup(talkturn_no, family):
 
     return df.loc[(df['talkturn_no'] == talkturn_no) & (df['family'] == family), 'talkturn'].values[0]
 
-def test_blob_accurateness(video_name_1, video_name_2):
+def test_blob_accurateness(video_name_1, video_name_2, parallel_run_settings):
     '''
 
     :return:
     '''
 
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     actual = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                             video_name_1 + '_' + video_name_2,
-                                             'Stage_3',
-                                             'narrative_fine.csv'))
+                                      video_name_1 + '_' + video_name_2,
+                                      'Stage_3',
+                                      'narrative_fine.csv'))
     matching_status = []
     for family in actual.family.unique():
         for talkturn_no in range(1,11):

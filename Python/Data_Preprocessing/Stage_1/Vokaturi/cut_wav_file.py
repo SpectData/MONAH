@@ -10,7 +10,6 @@ import pandas as pd
 from pydub import AudioSegment
 
 import Python.Data_Preprocessing.config.config as cfg
-import Python.Data_Preprocessing.config.dir_config as prs
 
 
 def convert(n_sec):
@@ -21,7 +20,7 @@ def convert(n_sec):
     '''
     return str(datetime.timedelta(seconds=n_sec))
 
-def cut_to_talkturn(file, start_time, end_time, talkturn_no):
+def cut_to_talkturn(file, start_time, end_time, talkturn_no, parallel_run_settings):
     '''
     cut wav file into talkturn wav files
     :param file: wav file
@@ -30,7 +29,7 @@ def cut_to_talkturn(file, start_time, end_time, talkturn_no):
     :param talkturn_no: talkturn number
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
 
     t_1 = start_time * 1000
     t_2 = end_time * 1000
@@ -39,12 +38,13 @@ def cut_to_talkturn(file, start_time, end_time, talkturn_no):
     new_audio.export(os.path.join(parallel_run_settings['talkturn_wav_path'], file[:-4] + "_" +
                                   str(talkturn_no) + '.wav'), format="wav")
 
-def cut_files(video_name_1, video_name_2):
+
+def cut_files(video_name_1, video_name_2, parallel_run_settings):
     '''
     cut wav files into smaller wav talkturns
     :return: none
     '''
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     dfr = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                    video_name_1 + '_' + video_name_2,
                                    'Stage_2',
@@ -69,7 +69,8 @@ def cut_files(video_name_1, video_name_2):
             if start_time != end_time:
                 talkturn_number = row['talkturn no']
                 cut_to_talkturn(file=i, start_time=start_time, end_time=end_time,
-                                talkturn_no=talkturn_number)
+                                talkturn_no=talkturn_number,
+                                parallel_run_settings=parallel_run_settings)
                 print("\n Cut talkturn: " + str(talkturn_number))
             else:
                 continue

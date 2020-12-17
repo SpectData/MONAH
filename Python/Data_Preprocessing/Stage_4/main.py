@@ -21,16 +21,18 @@ def weave_session_level_transcript(video_name_1,
                                    p_tone,
                                    a_au,
                                    a_posiface,
-                                   a_smile):
+                                   a_smile,
+                                   parallel_run_settings):
     '''
     combine session level transcripts
     :param video_name_1:
     :param video_name_2:
     :return:
     '''
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+
     cdi.run_creating_directories(video_name_1, video_name_2)
-    sdp.get_demographics_blob(video_name_1, video_name_2, word_count=d_word_count)
+    sdp.get_demographics_blob(video_name_1, video_name_2, word_count=d_word_count,
+                              parallel_run_settings=parallel_run_settings)
     spp.get_prosody_blob(video_name_1, video_name_2, delay=p_delay, wpm=p_wpm, tone=p_tone)
     sap.get_actions_blob(video_name_1, video_name_2, au_action=a_au, posiface=a_posiface, smile=a_smile)
 
@@ -57,6 +59,7 @@ def weave_session_level_transcript(video_name_1,
                                          'narrative_coarse.csv'), index=False)
 
 if __name__ == '__main__':
+    parallel_run_settings = prs.get_parallel_run_settings("joshua_linux")
     weave_session_level_transcript(video_name_1='Ses01F_F',
                                    video_name_2='Ses01F_M',
                                    d_word_count=1,
@@ -65,5 +68,6 @@ if __name__ == '__main__':
                                    p_tone=1,
                                    a_au=1,
                                    a_posiface=1,
-                                   a_smile=1
+                                   a_smile=1,
+                                   parallel_run_settings=parallel_run_settings
                                    )
