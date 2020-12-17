@@ -7,7 +7,6 @@ import pandas as pd
 import seaborn as sns
 
 import Python.Data_Preprocessing.config.dir_config as dcf
-import pitch_viz
 
 
 def adhoc():
