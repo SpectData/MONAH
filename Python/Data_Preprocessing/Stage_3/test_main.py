@@ -14,11 +14,9 @@ def talkturn_lookup(talkturn_no, family):
     '''
     talkturn = {'talkturn_no': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                                 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-                                1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                                 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                 'family': ['v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v',
                            'vp', 'vp', 'vp', 'vp', 'vp', 'vp', 'vp', 'vp', 'vp', 'vp',
-                           'va', 'va', 'va', 'va', 'va', 'va', 'va', 'va', 'va', 'va',
                            'vpa', 'vpa', 'vpa', 'vpa', 'vpa', 'vpa', 'vpa', 'vpa', 'vpa', 'vpa'],
                 'talkturn': ['the woman said excuse me.',
                              'the man said do you have your forms.',
