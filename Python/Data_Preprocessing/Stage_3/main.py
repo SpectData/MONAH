@@ -36,6 +36,7 @@ def weave_vpa(video_1, video_2, delay, tone, speech_rate, au_action, posiface, s
 
     # Stage 1 runs - transcripts
     cmf.run_creating_directories(video_1, video_2, parallel_run_settings)
+    # TODO: write if statements to detect if we can skip some steps
     # exa.run_extracting_audio(parallel_run_settings)
     # gst.run_google_speech_to_text(video_1, video_2, parallel_run_settings)
     # opf.run_open_face(video_1, video_2, parallel_run_settings)

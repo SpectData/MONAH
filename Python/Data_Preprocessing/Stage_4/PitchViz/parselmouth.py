@@ -1,7 +1,12 @@
+import glob
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import seaborn as sns
 
+import Python.Data_Preprocessing.config.dir_config as dcf
 import parselmouth
 
 sns.set()  # Use seaborn's default style to make attractive graphs
@@ -64,3 +69,29 @@ g1 = sns.scatterplot(data=pitch_values, ax=axs[0])
 g2 = sns.scatterplot(data=pitch_values, ax=axs[1])
 axs[0].text(0.1, 50, "?The", **style)
 plt.show()
+
+video_name_1 = 'Ses01F_F'
+video_name_2 = 'Ses01F_M'
+
+if __name__ == '__main__':
+    parallel_run_settings = dcf.get_parallel_run_settings('joshua_linux')
+    parallel_run_settings['talkturn_wav_path']
+
+    text_narrative = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
+                                              video_name_1 + '_' + video_name_2,
+                                              "Stage_3",
+                                              "narrative_fine.csv"))
+
+    row_i = text_narrative.iloc[0]
+    os.path.join(parallel_run_settings['talkturn_wav_path'],
+                 row_i['audio_id'] + '_' + str(row_i['talkturn no']))
+
+    # List the talkturn wavs that have been cut
+    wav_files = glob.glob(parallel_run_settings['talkturn_wav_path'] + "/*.wav")
+    wav_df = pd.DataFrame(wav_files, columns=['path'])
+    wav_i = wav_df['path'][0]
+    wav_i = os.path.basename(wav_i)
+    wav_i = os.path.splitext(wav_i)[0]
+
+    # TODO Joshua to resume here
+    talkturn_id = int(wav_i[wav_i.rfind('_') + 1:])

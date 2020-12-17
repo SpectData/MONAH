@@ -35,6 +35,8 @@ def cut_to_talkturn(file, start_time, end_time, talkturn_no, parallel_run_settin
     t_2 = end_time * 1000
     new_audio = AudioSegment.from_wav(os.path.join(parallel_run_settings['wav_path'], file))
     new_audio = new_audio[t_1:t_2]
+
+    # Marriane TODO reduce dependencies on finding a certain character
     new_audio.export(os.path.join(parallel_run_settings['talkturn_wav_path'], file[:-4] + "_" +
                                   str(talkturn_no) + '.wav'), format="wav")
 
