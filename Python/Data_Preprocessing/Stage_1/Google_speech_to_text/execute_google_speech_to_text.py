@@ -37,7 +37,9 @@ def run_google_speech_to_text(video_name_1, video_name_2, parallel_run_settings)
         utg.upload_blob(bucket_name=bucket,
                         destination_blob_name=audio_id,
                         parallel_run_settings=parallel_run_settings)
-        result = twf.transcribe_gcs(bucket_name=bucket, audio_id=audio_id)
+        result = twf.transcribe_gcs(bucket_name=bucket,
+                                    audio_id=audio_id,
+                                    parallel_run_settings=parallel_run_settings)
         utterance = utterance.append(result[0])
         word = word.append(result[1])
 

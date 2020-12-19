@@ -3,7 +3,11 @@ Main manager for formulating vpa text_blob
 '''
 
 import Python.Data_Preprocessing.Stage_1.Audio_files_manipulation.copy_mp4_files as cmf
+import Python.Data_Preprocessing.Stage_1.FFMpeg.execute_extracting_audio as exa
+import Python.Data_Preprocessing.Stage_1.Google_speech_to_text.execute_google_speech_to_text as gst
+import Python.Data_Preprocessing.Stage_1.OpenFace.execute_open_face_to_dataset as opf
 import Python.Data_Preprocessing.Stage_1.Vokaturi.execute_vokaturi as exv
+import Python.Data_Preprocessing.Stage_2.Verbatim.execute_weaving_talkturn as wvt
 import Python.Data_Preprocessing.Stage_2.Actions.talkturn_family_actions as tfa
 import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_family_prosody as tfp
 import Python.Data_Preprocessing.Stage_3.narrative_fine as atb
@@ -38,9 +42,9 @@ def weave_vpa(video_1, video_2, delay, tone, speech_rate, au_action, posiface, s
     cmf.run_creating_directories(video_1, video_2, parallel_run_settings)
     # TODO: write if statements to detect if we can skip some steps
     # exa.run_extracting_audio(parallel_run_settings)
-    # gst.run_google_speech_to_text(video_1, video_2, parallel_run_settings)
-    # opf.run_open_face(video_1, video_2, parallel_run_settings)
-    # wvt.run_weaving_talkturn(video_1, video_2, parallel_run_settings)
+    gst.run_google_speech_to_text(video_1, video_2, parallel_run_settings)
+    opf.run_open_face(video_1, video_2, parallel_run_settings)
+    wvt.run_weaving_talkturn(video_1, video_2, parallel_run_settings)
     exv.run_vokaturi(video_1, video_2, parallel_run_settings)
     print("Done data processing - Stage 1")
 
@@ -57,10 +61,10 @@ def weave_vpa(video_1, video_2, delay, tone, speech_rate, au_action, posiface, s
 
 
 if __name__ == '__main__':
-    parallel_run_settings = prs.get_parallel_run_settings('joshua_linux')
+    parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
 
-    weave_vpa(video_1='Ses01F_F',
-              video_2='Ses01F_M',
+    weave_vpa(video_1='zoom_F',
+              video_2='zoom_M',
               delay=1,
               tone=1,
               speech_rate=1,

@@ -85,25 +85,16 @@ def get_parallel_run_settings(computer_name):
     parallel_run_settings['Vokaturi_Library_Path'] = None
     parallel_run_settings['talkturn_wav_path'] = None
 
-    # Populate Core directories
     if computer_name == 'marriane_win':
         parallel_run_settings['MONAH'] = str(pathlib.Path("E:\iemocap"))
-        parallel_run_settings['OpenFace_CSV_Path'] = str(pathlib.Path("E:\iemocap\staging"))
-        parallel_run_settings['avi_path'] = str(pathlib.Path("E:\iemocap\downloaded_videos"))
-        parallel_run_settings['wav_path'] = str(pathlib.Path("E:\iemocap\downloaded_audio"))
-        parallel_run_settings['csv_path'] = str(pathlib.Path("E:\iemocap\output"))
+
         parallel_run_settings['feature_extraction_path'] = str(
             pathlib.Path("E:\OpenFace_2.2.0_win_x64 Josh\OpenFace_2.2.0_win_x64"))
+
         parallel_run_settings['offset_multiple'] = 0
-        parallel_run_settings['usb_csv_path'] = str(pathlib.Path("E:\iemocap\open_face_csv"))
+
         parallel_run_settings['Vokaturi_Install_Path'] = str(
             pathlib.Path("E:/OpenVokaturi-3-4/OpenVokaturi-3-4"))
-        parallel_run_settings['Vokaturi_API_Path'] = str(
-            pathlib.Path("E:/OpenVokaturi-3-4/OpenVokaturi-3-4/api"))
-        parallel_run_settings['Vokaturi_Library_Path'] = str(pathlib.Path(
-            "E:/OpenVokaturi-3-4/OpenVokaturi-3-4/lib/open/win/OpenVokaturi-3-4-win64.dll"))
-        parallel_run_settings['talkturn_wav_path'] = str(
-            pathlib.Path("E:/iemocap/downloaded_audio/talkturn"))
 
     if computer_name == 'marriane_linux':
         # TODO: Josh to delete derivative folders after checking that it works on Linux
