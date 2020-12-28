@@ -97,17 +97,15 @@ def get_parallel_run_settings(computer_name):
             pathlib.Path("E:/OpenVokaturi-3-4/OpenVokaturi-3-4"))
 
     if computer_name == 'marriane_linux':
-        # TODO: Josh to delete derivative folders after checking that it works on Linux
-        parallel_run_settings['MONAH'] = str(pathlib.Path("/datadrive/iemocap"))
-        parallel_run_settings['OpenFace_CSV_Path'] = str(pathlib.Path("/datadrive/iemocap/staging"))
-        parallel_run_settings['avi_path'] = str(
-            pathlib.Path("/datadrive/iemocap/downloaded_videos"))
-        parallel_run_settings['wav_path'] = str(pathlib.Path("/datadrive/iemocap/downloaded_audio"))
+        parallel_run_settings['MONAH'] = str(pathlib.Path("/datadrive/MONAH"))
+
         parallel_run_settings['feature_extraction_path'] = str(
-            pathlib.Path("E:\OpenFace_2.2.0_win_x64 Josh\OpenFace_2.2.0_win_x64"))
+            pathlib.Path("/datadrive/Github/opencv-4.1.0/build/bin/"))
+
         parallel_run_settings['offset_multiple'] = 0
-        parallel_run_settings['usb_csv_path'] = str(
-            pathlib.Path("/datadrive/iemocap/open_face_csv"))
+
+        parallel_run_settings['Vokaturi_Install_Path'] = str(
+            pathlib.Path("/datadrive/Github/OpenVokaturi-3-4"))
 
     if computer_name == 'joshua_linux':
         parallel_run_settings['MONAH'] = str(pathlib.Path("/mnt/S/MONAH"))

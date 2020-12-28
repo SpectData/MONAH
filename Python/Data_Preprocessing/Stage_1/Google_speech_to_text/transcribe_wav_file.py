@@ -6,7 +6,8 @@ import os
 
 import pandas as pd
 from pydub.utils import mediainfo
-from google.cloud import speech_v1p1beta1 as speech
+from google.cloud import speech
+from scipy.io.wavfile import read as read_wav
 import Python.Data_Preprocessing.config.dir_config as cfg
 
 
@@ -20,13 +21,14 @@ def transcribe_gcs(bucket_name, audio_id, parallel_run_settings):
 
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./data/secrets/69b431b78607.json"
     info = mediainfo(os.path.join(parallel_run_settings['wav_path'], audio_id))
-    sample_rate = info['sample_rate']
+    # sample_rate = info['sample_rate']
+    sample_rate, data = read_wav(os.path.join(parallel_run_settings['wav_path'], audio_id))
     channels = info['channels']
     client = speech.SpeechClient()
     gcs_uri = "gs://" + bucket_name + "/" + audio_id
-    audio = speech.types.RecognitionAudio(uri=gcs_uri)
-    config = speech.types.RecognitionConfig(
-        encoding=speech.enums.RecognitionConfig.AudioEncoding.LINEAR16,
+    audio = speech.RecognitionAudio(uri=gcs_uri)
+    config = speech.RecognitionConfig(
+        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=sample_rate,
         language_code='en-US',
         enable_speaker_diarization=True,
@@ -70,7 +72,7 @@ def transcribe_gcs(bucket_name, audio_id, parallel_run_settings):
     return df_talkturn, df_word
 
 if __name__ == '__main__':
-    parallel_run_settings = cfg.get_parallel_run_settings("marriane_win")
+    parallel_run_settings = cfg.get_parallel_run_settings("marriane_linux")
     RESULT = transcribe_gcs(bucket_name="marriane-bucket",
                             audio_id="zoom_F.wav",
                             parallel_run_settings=parallel_run_settings)
