@@ -6,7 +6,7 @@ import os
 
 import pandas as pd
 from pydub.utils import mediainfo
-from google.cloud import speech
+from google.cloud import speech_v1p1beta1 as speech
 from scipy.io.wavfile import read as read_wav
 import Python.Data_Preprocessing.config.dir_config as cfg
 
@@ -20,20 +20,20 @@ def transcribe_gcs(bucket_name, audio_id, parallel_run_settings):
     '''
 
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./data/secrets/69b431b78607.json"
-    info = mediainfo(os.path.join(parallel_run_settings['wav_path'], audio_id))
+    # info = mediainfo(os.path.join(parallel_run_settings['wav_path'], audio_id))
     # sample_rate = info['sample_rate']
     sample_rate, data = read_wav(os.path.join(parallel_run_settings['wav_path'], audio_id))
-    channels = info['channels']
+    # channels = info['channels']
     client = speech.SpeechClient()
     gcs_uri = "gs://" + bucket_name + "/" + audio_id
-    audio = speech.RecognitionAudio(uri=gcs_uri)
-    config = speech.RecognitionConfig(
-        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+    audio = speech.types.RecognitionAudio(uri=gcs_uri)
+    config = speech.types.RecognitionConfig(
+        encoding=speech.enums.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=sample_rate,
         language_code='en-US',
         enable_speaker_diarization=True,
         diarization_speaker_count=1,
-        audio_channel_count=channels,
+        audio_channel_count=1,# channels,
         enable_separate_recognition_per_channel=True)
 
     operation = client.long_running_recognize(config, audio)
@@ -50,8 +50,7 @@ def transcribe_gcs(bucket_name, audio_id, parallel_run_settings):
             for word_info in alternative.words:
                 sub_row_i = {'word': word_info.word,
                              'start_time': (word_info.start_time.seconds +
-                                            word_info.start_time.nanos*1e-9),
-                             'speaker_tag': word_info.speaker_tag}
+                                            word_info.start_time.nanos*1e-9)}
                 sub_row_list.append(sub_row_i)
         row_list.append(row_i)
 
