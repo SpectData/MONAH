@@ -1,7 +1,7 @@
 '''
 Tests ./parallel_run_settings_secrets.py
 '''
-
+import pytest
 import Python.Data_Preprocessing.config.dir_config as prs
 
 
@@ -9,7 +9,7 @@ class TestPRS:
     '''
     Scoring Test
     '''
-    computer_name = 'joshua_linux'
+    computer_name = 'marriane_win'
 
     parallel_run_settings = prs.get_parallel_run_settings(computer_name)
 
