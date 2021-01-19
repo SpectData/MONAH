@@ -82,6 +82,6 @@ Features introduced in Paper 1 are in white, features introduced in paper 2 are 
 
 ![alt text](https://lucid.app/publicSegments/view/65ae8f82-2972-4ce7-aedc-54dcf7af47d2/image.jpeg?raw=true)
 
-- Paper 1 (white features) Kim, J. Y., Kim, G. Y., & Yacef, K. (2019, December). Detecting depression in dyadic conversations with multimodal narratives and visualizations. In Australasian Joint Conference on Artificial Intelligence (pp. 303-314). Springer, Cham.
+- Paper 1 (white features) Kim, J. Y., Kim, G. Y., & Yacef, K. (2019). Detecting depression in dyadic conversations with multimodal narratives and visualizations. In Australasian Joint Conference on Artificial Intelligence (pp. 303-314). Springer, Cham.
 - Paper 2 (blue features) Kim, J. Y. et al (2021). MONAH: Multimodal Narratives for Humans. To appear in EACL 2021.
 
