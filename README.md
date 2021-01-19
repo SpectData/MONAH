@@ -78,7 +78,8 @@ Joshua to add Compulsory Unit Tests
 # Citation
 If you find MONAH useful in any of your publications we ask you to cite the following:
 
-"Under review"
+Features introduced in Paper 1 are in white, features introduced in paper 2 are in blue.
 
-## Works that used MONAH (APA-style citations)
 - Kim, J. Y., Kim, G. Y., & Yacef, K. (2019, December). Detecting depression in dyadic conversations with multimodal narratives and visualizations. In Australasian Joint Conference on Artificial Intelligence (pp. 303-314). Springer, Cham.
+- Kim, J. Y. et al (2021). MONAH: Multimodal Narratives for Humans. To appear in EACL 2021.
+
