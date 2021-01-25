@@ -63,12 +63,15 @@ def compute_coversation_pitch_summary(video_name_1, video_name_2, parallel_run_s
                                         video_name_1 + '_' + video_name_2,
                                         "Stage_2",
                                         'weaved talkturns.csv'))
+
     talkturn['wav_name'] = talkturn['video_id'] + '_' + talkturn['talkturn no'].map(str) + '.wav'
 
     # List the wav talkturn files extracted
     wav_files = glob.glob(os.path.join(parallel_run_settings['talkturn_wav_path'], '*.wav'))
     wav_files = pd.DataFrame(wav_files)
     wav_files.columns = ['wav_path']
+
+    # Extract the file name from the full path
     wav_files['wav_name'] = [os.path.basename(x) for x in wav_files['wav_path']]
 
     # Inner join between talkturn and wav_files will give us the talkturns that has wav associated
@@ -76,20 +79,39 @@ def compute_coversation_pitch_summary(video_name_1, video_name_2, parallel_run_s
 
     # For each speaker, calculate the sd and mean of the pitch
     videos = [video_name_1, video_name_2]
-    video = videos[0]
+    videos_stats = pd.DataFrame()  # Initiate blank data frame to hold the summary stats
 
-    filtered = merged[merged['video_id'] == video]
-    mean, sd = compute_speaker_pitch_summary(dfr=filtered)
+    for video_idx in range(len(videos)):
+        video = videos[video_idx]
 
-    # TODO: I have calcuated mean and sd per speaker
-    # to resume with sd and mean for both speaker, then I know whether each word is high pitch
+        filtered = merged[merged['video_id'] == video]
+        mean, sd = compute_speaker_pitch_summary(dfr=filtered)
+
+        # Make a one-row dataframe to be appended
+        video_stat = pd.DataFrame({'video': video,
+                                   'mean': mean,
+                                   'sd': sd}, index=[0])
+
+        # Append the one-row dataframe
+        videos_stats = pd.concat([videos_stats, video_stat])
+
+    # Since all rows have index 0, reset index gives it running index.
+    videos_stats.reset_index(inplace=True, drop=True)
+
+    return videos_stats
 
 
-def extract_pitch(video_name_1, video_name_2, parallel_run_settings):
+def annotate_pitch(video_name_1, video_name_2, parallel_run_settings):
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,
                                         "Stage_2",
                                         'weaved talkturns.csv'))
+
+    videos_stats = compute_coversation_pitch_summary(video_name_1,
+                                                     video_name_2,
+                                                     parallel_run_settings)
+
+    # PAUSE, I need to visualize the distribution of pitch for all speakers to decide my z-score rule
 
 
 def extract_delay(video_name_1, video_name_2, parallel_run_settings):
@@ -121,5 +143,3 @@ if __name__ == '__main__':
 
     video_name_1 = 'Ses01F_F'
     video_name_2 = 'Ses01F_M'
-
-    extract_delay(video_name_1='Ses01F_F', video_name_2='Ses01F_M')
