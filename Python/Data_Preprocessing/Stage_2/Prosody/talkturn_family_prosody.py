@@ -5,6 +5,7 @@ import os
 
 import numpy as np
 import pandas as pd
+from datetime import datetime
 
 import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_delay as dly
 import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_wpm as wpm
@@ -51,9 +52,14 @@ def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
     Combine normalize feature values
     :return: none
     '''
-    # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    prosody_start = datetime.now()
+    start = datetime.now()
     wpm.extract_speech_rate(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
+    print('Stage 2 Prosody SpeechRate Time: ', datetime.now() - start)
+
+    start = datetime.now()
     dly.extract_delay(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
+    print('Stage 2 Prosody Delay Time: ', datetime.now() - start)
 
     # Load dataframes
     df_wpm = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
@@ -116,5 +122,8 @@ def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
                             'talkturn_family_prosody.csv'),
                index=False)
 
+    print('Stage 2 Prosody Time: ', datetime.now() - prosody_start)
+
 if __name__ == '__main__':
-    combine_prosody_features(video_name_1='zoom_F', video_name_2='zoom_M')
+    combine_prosody_features(video_name_1='zoom_F',
+                             video_name_2='zoom_M')
