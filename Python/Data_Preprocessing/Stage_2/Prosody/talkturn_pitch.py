@@ -66,6 +66,7 @@ def compute_speaker_pitch_summary(dfr):
     :return:
     '''
     speaker_pitch = pd.DataFrame()
+    speaker_intensity = pd.DataFrame()
     talkturn_idx = 0
     for talkturn_idx in range(len(dfr)):
         talkturn_i = dfr.iloc[talkturn_idx]
@@ -87,10 +88,31 @@ def compute_speaker_pitch_summary(dfr):
         if len(pitch_df) > 0:
             speaker_pitch = pd.concat([speaker_pitch, pitch_df], axis=0)
 
-    mean = speaker_pitch['F0'].mean()
-    sd = speaker_pitch['F0'].std()
+        # Intensity
+        intensity = snd.to_intensity()
+        intensity_values = intensity.values[0]
+        intensity_values[intensity_values == 0] = np.nan
+        intensity_df = pd.DataFrame()
+        intensity_df['time'] = intensity.xs()
+        # the time is based on time in wav (start from zero for every talkturn)
+        # We add the start time of everytalk turn to compute the time in conversation.
+        intensity_df['time'] += talkturn_i['start time']
+        intensity_df['intensity'] = intensity_values
+        intensity_df['video_id'] = talkturn_i['video_id']
 
-    return mean, sd, speaker_pitch
+        # Drop silences that will affect sd and mean calculation
+        intensity_df = intensity_df[intensity_df['intensity'] > 0]
+
+        if len(intensity_df) > 0:
+            speaker_intensity = pd.concat([speaker_intensity, intensity_df], axis=0)
+
+    stats = {}
+    stats['mean_pitch'] = speaker_pitch['F0'].mean()
+    stats['sd_pitch'] = speaker_pitch['F0'].std()
+    stats['mean_intensity'] = speaker_intensity['intensity'].mean()
+    stats['sd_intensity'] = speaker_intensity['intensity'].std()
+
+    return stats, speaker_pitch, speaker_intensity
 
 
 def compute_coversation_pitch_summary(video_name_1, video_name_2, parallel_run_settings):
@@ -108,34 +130,41 @@ def compute_coversation_pitch_summary(video_name_1, video_name_2, parallel_run_s
     # For each speaker, calculate the sd and mean of the pitch
     videos = [video_name_1, video_name_2]
     videos_stats = pd.DataFrame()  # Initiate blank data frame to hold the summary stats
-    videos_details = pd.DataFrame()
+    speakers_pitch = pd.DataFrame()
+    speakers_intensity = pd.DataFrame()
     video_idx = 0
     for video_idx in range(len(videos)):
         video = videos[video_idx]
 
         filtered = merged[merged['video_id'] == video]
-        mean, sd, video_detail = compute_speaker_pitch_summary(dfr=filtered)
+        stats, speaker_pitch, speaker_intensity = compute_speaker_pitch_summary(dfr=filtered)
 
         # Make a one-row dataframe to be appended
         video_stat = pd.DataFrame({'video_id': video,
-                                   'mean_pitch': mean,
-                                   'sd_pitch': sd}, index=[0])
+                                   'mean_pitch': stats['mean_pitch'],
+                                   'sd_pitch': stats['sd_pitch'],
+                                   'mean_intensity': stats['mean_intensity'],
+                                   'sd_intensity': stats['sd_intensity']
+                                   }, index=[0])
 
         # Append the one-row dataframe
         videos_stats = pd.concat([videos_stats, video_stat])
-        videos_details = pd.concat([videos_details, video_detail])
+        speakers_pitch = pd.concat([speakers_pitch, speaker_pitch])
+        speakers_intensity = pd.concat([speakers_intensity, speaker_intensity])
 
     # Since all rows have index 0, reset index gives it running index.
     videos_stats.reset_index(inplace=True, drop=True)
 
-    return videos_stats, videos_details
+    return videos_stats, speakers_pitch, speakers_intensity
 
 
 def annotate_pitch(video_name_1, video_name_2, parallel_run_settings):
+
     # Get mean and sd by speakers
-    videos_stats, videos_details = compute_coversation_pitch_summary(video_name_1,
-                                                                     video_name_2,
-                                                                     parallel_run_settings)
+    videos_stats, speakers_pitch, speakers_intensity = compute_coversation_pitch_summary(
+        video_name_1,
+        video_name_2,
+        parallel_run_settings)
 
     # Get word level timings with pitch information
     word_timing = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
@@ -165,11 +194,11 @@ def annotate_pitch(video_name_1, video_name_2, parallel_run_settings):
     qcdf = cross_join.groupby(['talkturn_no', 'text'])['text'].count()
     qcdf = qcdf.reset_index(name='nrow')
     qcdf['text_count'] = qcdf.apply(lambda x: len(x.text.split()), axis=1)
+    # Asserting 100% match between number of rows and word count from text
     assert np.average(qcdf['text_count'] == qcdf['nrow']) == 1.0
 
     # Get pitch information
-    word_pitches = cartesian_product_basic(cross_join, videos_details)
-    word_pitches.columns
+    word_pitches = cartesian_product_basic(cross_join, speakers_pitch)
     word_pitches = word_pitches[word_pitches['video_id_x'] == word_pitches['video_id_y']]
 
     word_pitches['approximate_time_match'] = word_pitches.apply(
@@ -177,22 +206,96 @@ def annotate_pitch(video_name_1, video_name_2, parallel_run_settings):
         , axis=1)
 
     word_pitches = word_pitches[word_pitches['approximate_time_match']]
+    word_pitches.columns = ['video_id', 'audio_id', 'speaker', 'talkturn_no', 'text',
+                            'talkturn_start', 'talkturn_end', 'wav_name', 'wav_path', 'Audio_ID',
+                            'word', 'start_time', 'word_in_text', 'wordtime_in_talkturntime',
+                            'time', 'F0', 'video_id_y', 'approximate_time_match']
 
     # Once approximately time matched, compute average across time matches
     # Intuition: computing the average F0 across +/- 0.05 seconds
-
-    word_stats = word_pitches.groupby(['video_id', 'talkturn_no', 'text', 'word'])[
+    word_pitches = word_pitches.groupby(['video_id', 'talkturn_no', 'text', 'word'])[
         'start_time', 'F0'].mean()
-    word_stats = word_stats.reset_index()
-    word_stats = word_stats.sort_values(['video_id', 'talkturn_no', 'start_time'])
+    word_pitches = word_pitches.reset_index()
+    word_pitches = word_pitches.sort_values(['video_id', 'talkturn_no', 'start_time'])
 
+    # Get intensity information
+    word_intensities = cartesian_product_basic(cross_join, speakers_intensity)
+    word_intensities.columns
+    word_intensities = word_intensities[
+        word_intensities['video_id_x'] == word_intensities['video_id_y']]
+
+    word_intensities['approximate_time_match'] = word_intensities.apply(
+        lambda x: x.time >= x.start_time - 0.05 and x.time <= x.start_time + 0.05
+        , axis=1)
+
+    word_intensities = word_intensities[word_intensities['approximate_time_match']]
+    word_intensities.columns = ['video_id', 'audio_id', 'speaker', 'talkturn_no', 'text',
+                                'talkturn_start', 'talkturn_end', 'wav_name', 'wav_path',
+                                'Audio_ID',
+                                'word', 'start_time', 'word_in_text', 'wordtime_in_talkturntime',
+                                'time', 'intensity', 'video_id_y', 'approximate_time_match']
+
+    # Once approximately time matched, compute average across time matches
+    # Intuition: computing the average F0 across +/- 0.05 seconds
+    word_intensities = word_intensities.groupby(['video_id', 'talkturn_no', 'text', 'word'])[
+        'start_time', 'intensity'].mean()
+    word_intensities = word_intensities.reset_index()
+    word_intensities = word_intensities.sort_values(['video_id', 'talkturn_no', 'start_time'])
+
+    word_intensities.columns
+
+    # Merge in video statistics to prepare for z computations
+    word_stats = pd.merge(word_pitches, word_intensities, how='outer')
     word_stats = pd.merge(word_stats, videos_stats)
+
+    # z computations
     word_stats['z_pitch'] = (word_stats['F0'] - word_stats['mean_pitch']) / \
                             word_stats['sd_pitch']
 
-    # I have visualized the distribution of pitches, mostly unimodal
+    word_stats['z_intensity'] = (word_stats['intensity'] - word_stats['mean_intensity']) / \
+                                word_stats['sd_intensity']
+
+    # Annotations
     up_arrow = u"\u2191"
-    print(up_arrow + 'hi')
+    down_arrow = u"\u2193"
+
+    word_stats['pitch_annotation'] = np.select(
+        [
+            word_stats['z_pitch'].between(3, 4, inclusive=False),
+            word_stats['z_pitch'].ge(4),
+            word_stats['z_pitch'].between(-3, -4, inclusive=False),
+            word_stats['z_pitch'].le(-4),
+        ],
+        [
+            up_arrow,
+            up_arrow + up_arrow,
+            down_arrow,
+            down_arrow + down_arrow
+        ],
+        default=None
+    )
+
+    word_stats['intensity_annotation'] = np.select(
+        [
+            word_stats['intensity'].ge(80),
+            word_stats['z_intensity'].ge(3)
+        ],
+        [
+            True,
+            True,
+        ],
+        default=False
+    )
+    return word_stats
+
+
+def overwrite_verbatim(word_stats):
+    has_annotations = word_stats[
+        (word_stats['pitch_annotation'].notna()) | \
+        (word_stats['intensity_annotation'])
+        ]
+
+    # TODO: Read in talkturn and overwrite it appropriately
 
 
 if __name__ == '__main__':
@@ -200,3 +303,4 @@ if __name__ == '__main__':
 
     video_name_1 = 'Ses01F_F'
     video_name_2 = 'Ses01F_M'
+    word_stats = annotate_pitch(video_name_1, video_name_2, parallel_run_settings)
