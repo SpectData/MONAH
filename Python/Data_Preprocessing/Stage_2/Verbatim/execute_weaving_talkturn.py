@@ -8,17 +8,22 @@ import os
 
 import pandas as pd
 
-import Python.Data_Preprocessing.Stage_1.Google_speech_to_text.execute_google_speech_to_text as gst
 import Python.Data_Preprocessing.config.config as cfg
 import Python.Data_Preprocessing.config.dir_config as prs
 
 
-def run_weaving_talkturn(video_name_1, video_name_2, parallel_run_settings):
+def run_weaving_talkturn(video_name_1, video_name_2, parallel_run_settings,
+                         input_filepath=None, output_filepath=None):
     '''
-    weave resulted scripts from google speech to text
-    :return: none
+    Weave talkturns from google speech to text
+    :param video_name_1:
+    :param video_name_2:
+    :param parallel_run_settings:
+    :param input_filepath:
+    :param output_filepath:
+    :return:
     '''
-    gst.run_google_speech_to_text(video_name_1, video_name_2, parallel_run_settings)
+    # gst.run_google_speech_to_text(video_name_1, video_name_2, parallel_run_settings)
     # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
 
     # Load dataframes

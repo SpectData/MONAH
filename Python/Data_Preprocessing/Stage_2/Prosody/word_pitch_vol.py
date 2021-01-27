@@ -9,6 +9,7 @@ to compute sd and mean
 '''
 import glob
 import os
+from shutil import copyfile
 
 import numpy as np
 import pandas as pd
@@ -289,13 +290,85 @@ def annotate_pitch(video_name_1, video_name_2, parallel_run_settings):
     return word_stats
 
 
-def overwrite_verbatim(word_stats):
-    has_annotations = word_stats[
-        (word_stats['pitch_annotation'].notna()) | \
-        (word_stats['intensity_annotation'])
-        ]
+def create_pitchvol_words(require_pitch_vol, word_stats=None):
+    '''
 
-    # TODO: Read in talkturn and overwrite it appropriately
+    :param word_stats:
+    :param require_pitch_vol: True only when pitch and/or vol is required.
+    :return:
+    '''
+
+    if require_pitch_vol:
+
+        has_annotations = word_stats[
+            (word_stats['pitch_annotation'].notna()) | \
+            (word_stats['intensity_annotation'])
+            ]
+
+        has_annotations = has_annotations[['video_id', 'word', 'start_time',
+                                           'pitch_annotation',
+                                           'intensity_annotation'
+                                           ]]
+
+        # Read in original word timings
+        original = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
+                                            video_name_1 + '_' + video_name_2,
+                                            "Stage_1",
+                                            'word_transcripts.csv'))
+
+        # Rounding is necessary otherwise the columnns won't join
+        original['start_time'] = original['start_time'].round(10)
+        has_annotations['start_time'] = has_annotations['start_time'].round(10)
+
+        merged = pd.merge(left=original, right=has_annotations, how='left',
+                          left_on=['Audio_ID', "word", 'start_time'],
+                          right_on=['video_id', "word", 'start_time'])
+
+        merged = merged[['Audio_ID', 'word', 'start_time',
+                         'pitch_annotation',
+                         'intensity_annotation'
+                         ]]
+
+        # Temp column to word the new value of word
+        merged['word_temp'] = merged['word']
+
+        # Iterate through the rows to update the word_temp
+        for row_idx in range(len(merged)):
+            row_i = merged.iloc[row_idx]
+
+            # Since pitch annotations are arrows in strings, check the presence of string
+            if isinstance(row_i['pitch_annotation'], str):
+                merged.at[row_idx, 'word_temp'] = row_i['pitch_annotation'] + row_i['word_temp']
+
+            # Check if intensity annotaion is True.
+            if row_i['intensity_annotation'] == True:
+                merged.at[row_idx, 'word_temp'] = row_i['word_temp'].upper()
+
+        # Extract and export relevant columns
+        export = merged[['Audio_ID', 'word_temp', 'start_time']]
+        export.columns = ['Audio_ID', 'word', 'start_time']
+
+        parallel_run_settings
+        export.to_csv(os.path.join(parallel_run_settings['csv_path'],
+                                   video_name_1 + '_' + video_name_2,
+                                   'Stage_2',
+                                   'pitch_vol_words.csv'),
+                      sep=',',
+                      index=False,
+                      encoding='utf-8')
+
+
+    else:  # require_pitch_vol == False
+        # Since pitch nor volume is both not required, simply copy the word
+        # timings across.
+        copyfile(src=os.path.join(parallel_run_settings['csv_path'],
+                                  video_name_1 + '_' + video_name_2,
+                                  'Stage_1',
+                                  'word_transcripts.csv'),
+                 dst=os.path.join(parallel_run_settings['csv_path'],
+                                  video_name_1 + '_' + video_name_2,
+                                  'Stage_2',
+                                  'pitch_vol_words.csv'))
 
 
 if __name__ == '__main__':
