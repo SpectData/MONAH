@@ -77,7 +77,7 @@ MOANH is meant to be a modular system that allows for additions to be simple. Pl
 
 - [data pipeline](Documents/data_pipeline.md)
   for the description of the data processing pipeline.
-- [continuous integration](Documents/data_pipeline.md)
+- [continuous integration](Documents/continuous_integration.md)
   for the description of the continuous integration process, unit tests etc.
 
 # Citation
