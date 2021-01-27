@@ -18,7 +18,7 @@ To add later
 # Required Inputs
 
 Two videos, one for each speaker. Works best when the camera is in front of the speaker, instead of from an angle.
-Verbatim Transcript from YouTube.
+Verbatim Transcript from Google Cloud Speech to Text.
 
 # User Interface
 
@@ -26,7 +26,7 @@ Text menu based for easy configuration.
 
 ![alt text](https://lucid.app/publicSegments/view/57060778-69b4-4b96-8a6a-2fa7016d2c23/image.jpeg?raw=true)
 
-# Support modalities in the narratives
+# Supported modalities in the narratives
 
 ![alt text](https://lucid.app/publicSegments/view/eed6165d-fd5d-4af5-a484-56693fe1ca1e/image.jpeg?raw=true)
 
