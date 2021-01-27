@@ -5,6 +5,7 @@ import logging
 import os
 
 import pandas as pd
+import Python.Data_Preprocessing.config.dir_config as prs
 
 
 def num_words_lookup(num):
@@ -127,8 +128,32 @@ def smile_look_up(num):
 
     return df.loc[(df['lb'] <= num) & (num < df['ub']), 'text'].values[0]
 
+def headnod_look_up(num):
+    '''
+    Look up table for tone
+    :return: look up data frame
+    '''
+    d = {'lb': [1, 0],
+         'ub': [2, 1],
+          'text': [' nodded', '']}
+    df = pd.DataFrame(data=d)
+
+    return df.loc[(df['lb'] <= num) & (num < df['ub']), 'text'].values[0]
+
+def leanforward_look_up(num):
+    '''
+    Look up table for tone
+    :return: look up data frame
+    '''
+    d = {'lb': [1, 0],
+         'ub': [2, 1],
+          'text': [' leaned forward', '']}
+    df = pd.DataFrame(data=d)
+
+    return df.loc[(df['lb'] <= num) & (num < df['ub']), 'text'].values[0]
+
 def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
-                    au_action, posiface, smile, parallel_run_settings):
+                    au_action, posiface, smile, headnod, leanforward, parallel_run_settings):
     '''
     Weaves narratives and exports csv
     :return: none
@@ -155,13 +180,13 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
     for df_ in dfs[1:]:
         dfr = pd.merge(dfr, df_, how='outer', on=['audio_id', 'speaker', 'talkturn no'])
 
-    if (delay + tone + speech_rate == 0) and (au_action + smile + posiface == 0):
+    if (delay + tone + speech_rate == 0) and (au_action + smile + posiface + headnod + leanforward == 0):
         family = 'v'
-    elif (delay + tone + speech_rate >= 1) and (au_action + smile + posiface == 0):
+    elif (delay + tone + speech_rate >= 1) and (au_action + smile + posiface + headnod + leanforward == 0):
         family = 'vp'
-    elif (delay + tone + speech_rate == 0) and (au_action + smile + posiface >= 1):
+    elif (delay + tone + speech_rate == 0) and (au_action + smile + posiface + headnod + leanforward >= 1):
         family = 'va'
-    elif (delay + tone + speech_rate >= 1) and (au_action + smile + posiface >= 1):
+    elif (delay + tone + speech_rate >= 1) and (au_action + smile + posiface + headnod + leanforward >= 1):
         family = 'vpa'
     else:
         family = ''
@@ -185,6 +210,9 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
     dfr['lip_stretcher_text'] = dfr.AU20_c.apply(lambda x: stretch_lip_look_up(num=x))
     dfr['jaw_drop_text'] = dfr.AU25_c.apply(lambda x: jaw_drop_look_up(num=x))
     dfr['tone_text'] = dfr.tone.apply(lambda x: tone_look_up(num=x) if x > 0 and x <= 3 else '')
+    dfr['headnod_text'] = dfr.headnod.apply(lambda x: headnod_look_up(num=x))
+    dfr['leanforward_text'] = dfr.leanforward.apply(lambda x: leanforward_look_up(num=x))
+    dfr = dfr.drop_duplicates()
 
     # smile
     dfr['blob_1'] = dfr.apply(lambda x: x['smile_text'] + ' ' if x['smile'] != 0 else '', axis=1)
@@ -198,45 +226,55 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
                                         x['lip_stretcher_text'] + x['jaw_drop_text'] + ' '
     if x['AU05_c'] != 0 or x['AU17_c'] != 0 or x['AU20_c'] != 0 or x['AU25_c'] != 0 else '', axis=1)
 
+    # head nod
+    dfr['blob_4'] = dfr.apply(lambda x: x['headnod_text'] + ' ' if x['headnod'] != 0 else '', axis=1)
+
+    # lean forward
+    dfr['blob_5'] = dfr.apply(lambda x: x['leanforward_text'] + ' ' if x['leanforward'] != 0 else '', axis=1)
+
     # delay
-    dfr['blob_4'] = dfr.apply(lambda x: 'after ' + x['delay_num_words'] + ' hundred milliseconds '
+    dfr['blob_6'] = dfr.apply(lambda x: 'after ' + x['delay_num_words'] + ' hundred milliseconds '
                                         + x['delay_text'] if x['delay_ms'] >= 200 else '', axis=1)
 
     # speaker
-    dfr['blob_5'] = dfr.apply(lambda x: 'the ' + x['speaker'] + ' ', axis=1)
+    dfr['blob_7'] = dfr.apply(lambda x: 'the ' + x['speaker'] + ' ', axis=1)
 
     # tone
-    dfr['blob_6'] = dfr.apply(lambda x: x['tone_text'], axis=1)
+    dfr['blob_8'] = dfr.apply(lambda x: x['tone_text'], axis=1)
 
     # connector
-    dfr['blob_7'] = dfr.apply(lambda x: 'and ' if x['tone_text'] != ''
+    dfr['blob_9'] = dfr.apply(lambda x: 'and ' if x['tone_text'] != ''
                                                   and x['wpm_text'] != ''
                                                   and tone != 0
                                                   and speech_rate != 0
     else '', axis=1)
 
     # speech rate
-    dfr['blob_8'] = dfr.apply(lambda x: x['wpm_text'], axis=1)
-    dfr['blob_9'] = dfr.apply(lambda x: 'the ' + x['speaker'], axis=1)
+    dfr['blob_10'] = dfr.apply(lambda x: x['wpm_text'], axis=1)
+    dfr['blob_11'] = dfr.apply(lambda x: 'the ' + x['speaker'], axis=1)
 
     # clean
     dfr['blob_1'] = dfr.blob_1.apply(lambda x: '' if smile == 0 else x)
     dfr['blob_2'] = dfr.blob_2.apply(lambda x: '' if posiface == 0 else x)
     dfr['blob_3'] = dfr.blob_3.apply(lambda x: '' if au_action == 0 else x)
-    dfr['blob_4'] = dfr.blob_4.apply(lambda x: '' if delay == 0 else x)
-    dfr['blob_6'] = dfr.blob_6.apply(lambda x: '' if tone == 0 else x)
-    dfr['blob_8'] = dfr.blob_8.apply(lambda x: '' if speech_rate == 0 else x)
-    dfr['blob_9'] = dfr.apply(lambda x: '' if x['blob_1'] == ''
+    dfr['blob_4'] = dfr.blob_4.apply(lambda x: '' if headnod == 0 else x)
+    dfr['blob_5'] = dfr.blob_5.apply(lambda x: '' if leanforward == 0 else x)
+    dfr['blob_6'] = dfr.blob_6.apply(lambda x: '' if delay == 0 else x)
+    dfr['blob_8'] = dfr.blob_8.apply(lambda x: '' if tone == 0 else x)
+    dfr['blob_10'] = dfr.blob_10.apply(lambda x: '' if speech_rate == 0 else x)
+    dfr['blob_11'] = dfr.apply(lambda x: '' if x['blob_1'] == ''
                               and x['blob_2'] == ''
                               and x['blob_3'] == ''
-                              else x['blob_9'], axis=1)
+                              and x['blob_4'] == ''
+                              and x['blob_5'] == ''
+                              else x['blob_11'], axis=1)
 
     # verbatim
-    dfr['blob_10'] = dfr.apply(lambda x: 'said ' + str.lower(x['text']) + '.', axis=1)
+    dfr['blob_12'] = dfr.apply(lambda x: 'said ' + str.lower(x['text']) + '.', axis=1)
     dfr['text_blob'] = ''
 
-    for blob in ['blob_9', 'blob_1', 'blob_2', 'blob_3', 'blob_4',
-                 'blob_5', 'blob_6', 'blob_7', 'blob_8', 'blob_10']:
+    for blob in ['blob_11', 'blob_1', 'blob_2', 'blob_3', 'blob_4', 'blob_5',
+                 'blob_6', 'blob_7', 'blob_8', 'blob_9', 'blob_10', 'blob_12']:
         dfr['text_blob'] = dfr.apply(lambda x: x['text_blob'] + x[blob], axis=1)
 
     dfr = dfr[['audio_id', 'talkturn no', 'family', 'text_blob']]
@@ -261,6 +299,7 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
     return dfr
 
 if __name__ == '__main__':
+    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     weave_narrative(video_name_1='Ses01F_F',
                     video_name_2='Ses01F_M',
                     delay=1,
@@ -268,4 +307,7 @@ if __name__ == '__main__':
                     speech_rate=1,
                     au_action=1,
                     posiface=1,
-                    smile=1)
+                    smile=1,
+                    headnod=1,
+                    leanforward=1,
+                    parallel_run_settings=parallel_run_settings)
