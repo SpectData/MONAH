@@ -71,11 +71,9 @@ Mimicry
 - Dynamic Time Wrapping
 
 
-
-
 # Contributions
 MOANH is meant to be a modular system that allows for additions to be simple. Please refer to
-[data pipelines](Documents/data_pipelines.md)
+[data pipeline](Documents/data_pipeline.md)
 for the description of the data processing pipeline.
 
 ## Pipeline (Intermediate Artifacts)
