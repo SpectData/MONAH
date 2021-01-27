@@ -17,16 +17,6 @@ if __name__ == '__main__':
     wvt.run_weaving_talkturn(video_name_1, video_name_2, parallel_run_settings,
                              input_filepath=os.path.join(parallel_run_settings['csv_path'],
                                                          video_name_1 + '_' + video_name_2,
-                                                         'Stage_1',
-                                                         "word_transcripts.csv"),
-                             output_filepath=os.path.join(parallel_run_settings['csv_path'],
-                                                          video_name_1 + '_' + video_name_2,
-                                                          'Stage_2',
-                                                          'weaved talkturns.csv'))
-
-    wvt.run_weaving_talkturn(video_name_1, video_name_2, parallel_run_settings,
-                             input_filepath=os.path.join(parallel_run_settings['csv_path'],
-                                                         video_name_1 + '_' + video_name_2,
                                                          'Stage_2',
                                                          "pitch_vol_words.csv"),
                              output_filepath=os.path.join(parallel_run_settings['csv_path'],
