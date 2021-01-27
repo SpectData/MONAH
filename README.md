@@ -3,7 +3,7 @@
 ## Problem
 
 Analyzing videos in video format (visual + audio + text) needs a lot of human expertise and end-to-end deep learning
-methods are less interpretable.
+methods are less interpretable as compared to multimodal annotations of the conversation.
 
 ## Solution
 
