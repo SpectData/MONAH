@@ -2,11 +2,12 @@
 Main manager for formulating vpa text_blob
 '''
 
+from datetime import datetime
+
 import Python.Data_Preprocessing.Stage_1.Audio_files_manipulation.copy_mp4_files as cmf
 import Python.Data_Preprocessing.Stage_2.Actions.talkturn_family_actions as tfa
 import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_family_prosody as tfp
 import Python.Data_Preprocessing.Stage_3.narrative_fine as atb
-from datetime import datetime
 import Python.Data_Preprocessing.config.dir_config as prs
 
 
@@ -32,7 +33,7 @@ def weave_vpa(video_1, video_2, delay, tone, speech_rate, au_action, posiface, s
     :param video_name_2: name of second video file
     :return: none
     '''
-    overall_start= datetime.now()
+    overall_start = datetime.now()
     start = datetime.now()
 
     # Stage 1 runs - transcripts
@@ -41,7 +42,15 @@ def weave_vpa(video_1, video_2, delay, tone, speech_rate, au_action, posiface, s
     # exa.run_extracting_audio(parallel_run_settings)
     # gst.run_google_speech_to_text(video_1, video_2, parallel_run_settings)
     opf.run_open_face(video_1, video_2, parallel_run_settings)
-    # wvt.run_weaving_talkturn(video_1, video_2, parallel_run_settings)
+    wvt.run_weaving_talkturn(video_1, video_2, parallel_run_settings,
+                             input_filepath=os.path.join(parallel_run_settings['csv_path'],
+                                                         video_name_1 + '_' + video_name_2,
+                                                         'Stage_1',
+                                                         "word_transcripts.csv"),
+                             output_filepath=os.path.join(parallel_run_settings['csv_path'],
+                                                          video_name_1 + '_' + video_name_2,
+                                                          'Stage_2',
+                                                          'weaved talkturns.csv'))
     exv.run_vokaturi(video_1, video_2, parallel_run_settings)
     print("Done data processing - Stage 1")
 

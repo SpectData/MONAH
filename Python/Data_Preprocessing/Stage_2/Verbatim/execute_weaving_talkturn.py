@@ -4,7 +4,6 @@ This script combines the output of google speech to text into talkturns
 
 import gc
 import logging
-import os
 
 import pandas as pd
 
@@ -27,10 +26,7 @@ def run_weaving_talkturn(video_name_1, video_name_2, parallel_run_settings,
     # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
 
     # Load dataframes
-    df_word = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                       video_name_1 + '_' + video_name_2,
-                                       'Stage_1',
-                                       "word_transcripts.csv"))
+    df_word = pd.read_csv(input_filepath)
     df_word['speaker_tag'] = df_word.apply(lambda x:
                                            cfg.parameters_cfg['speaker_1']
                                            if x['Audio_ID'] == video_name_1 else
@@ -115,10 +111,7 @@ def run_weaving_talkturn(video_name_1, video_name_2, parallel_run_settings,
     talkturn = pd.merge(dfr_a, dfr_b, how='outer', on=('video_id', 'audio_id', 'speaker', 'talkturn no'))
     talkturn = talkturn.sort_values(by=['video_id', 'audio_id', 'talkturn no'],
                                     ascending=[True, True, True])
-    talkturn.to_csv(os.path.join(parallel_run_settings['csv_path'],
-                                 video_name_1 + '_' + video_name_2,
-                                 'Stage_2',
-                                 'weaved talkturns.csv'),
+    talkturn.to_csv(output_filepath,
                     sep=',',
                     index=False,
                     encoding='utf-8')
@@ -127,5 +120,3 @@ def run_weaving_talkturn(video_name_1, video_name_2, parallel_run_settings,
 
 if __name__ == '__main__':
     parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
-    run_weaving_talkturn(video_name_1='zoom_F', video_name_2='zoom_M',
-                         parallel_run_settings=parallel_run_settings)
