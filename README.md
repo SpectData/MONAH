@@ -27,23 +27,35 @@ Text menu based for easy configuration.
 ![alt text](https://lucid.app/publicSegments/view/57060778-69b4-4b96-8a6a-2fa7016d2c23/image.jpeg?raw=true)
 
 # Support modalities in the narratives
+
 ![alt text](https://lucid.app/publicSegments/view/eed6165d-fd5d-4af5-a484-56693fe1ca1e/image.jpeg?raw=true)
 
-
 # Output - MONAH Narrative
+
 To add later
 
 # Non Python Dependencies (Technology Stack)
+
 To add as we build this repo up.
+
+## Verbatim Transcript
+
+Get word level timings alongside the transcript
+
+- Google Cloud Speech to Text
+  https://cloud.google.com/speech-to-text
+
 ## Fine Narratives
+
 Actions
+
 - OpenFace 2.2.0
-https://github.com/TadasBaltrusaitis/OpenFace
-  
+  https://github.com/TadasBaltrusaitis/OpenFace
 
 Prosody
+
 - Vokaturi 3.x
-https://developers.vokaturi.com/downloads/sdk
+  https://developers.vokaturi.com/downloads/sdk
 
 ## Coarse Narratives
 Demographics
