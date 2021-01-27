@@ -74,7 +74,9 @@ Mimicry
 
 
 # Contributions
-MOANH is meant to be a modular system that allows for additions to be simple. Joshua to add architectural diagram.
+MOANH is meant to be a modular system that allows for additions to be simple. Please refer to
+[data pipelines](Documents/data_pipelines.md)
+for the description of the data processing pipeline.
 
 ## Pipeline (Intermediate Artifacts)
 To add later
