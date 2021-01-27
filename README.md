@@ -62,31 +62,26 @@ Demographics
 - IBM Watson (Deprecated 1 Dec 2021)
 https://cloud.ibm.com/docs/personality-insights
 
-
 Semantics
+
 - Sentiment
 - Questions
 
 Mimicry
+
 - Dynamic Time Wrapping
 
-
 # Contributions
-MOANH is meant to be a modular system that allows for additions to be simple. Please refer to
-[data pipeline](Documents/data_pipeline.md)
-for the description of the data processing pipeline.
 
-## Pipeline (Intermediate Artifacts)
-To add later
+MOANH is meant to be a modular system that allows for additions to be simple. Please refer to:
 
-## Continuous Integration
-Joshua to add PyLint Python Style Tests
-Joshua to add Compulsory Unit Tests
-
-
-
+- [data pipeline](Documents/data_pipeline.md)
+  for the description of the data processing pipeline.
+- [continuous integration](Documents/data_pipeline.md)
+  for the description of the continuous integration process, unit tests etc.
 
 # Citation
+
 If you find MONAH useful in any of your publications we ask you to cite the following:
 
 Features introduced in Paper 1 are in white, features introduced in paper 2 are in blue.
