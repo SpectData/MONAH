@@ -8,8 +8,8 @@ methods are less interpretable.
 ## Solution
 
 Inspired by how the linguistics community analyze conversations using the Jefferson transcription system. MONAH creates
-a multi-modal text narrative for dyadic (two-people) video-recorded conversations by weaving _what_ is being said with _
-how_ its being said.
+a multi-modal text narrative for dyadic (two-people) video-recorded conversations by weaving _what_ is being said with
+_how_ its being said.
 
 # ScreenCast
 
@@ -33,8 +33,7 @@ Text menu based for easy configuration.
 # Output - MONAH Narrative
 To add later
 
-
-# Dependencies (Technology Stack)
+# Non Python Dependencies (Technology Stack)
 To add as we build this repo up.
 ## Fine Narratives
 Actions
