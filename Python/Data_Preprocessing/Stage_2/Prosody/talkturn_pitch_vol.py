@@ -20,7 +20,7 @@ def create_talkturn_pitch_vol(video_name_1, video_name_2, parallel_run_settings,
     '''
 
     # Create the word pitch and volume
-    wpv.create_pitchvol_words(require_pitch_vol)
+    wpv.create_pitchvol_words(video_name_1, video_name_2, parallel_run_settings, require_pitch_vol)
 
     # Reweave the talkturns using words with annotations
     wvt.run_weaving_talkturn(video_name_1, video_name_2, parallel_run_settings,

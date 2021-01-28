@@ -290,7 +290,7 @@ def annotate_pitch(video_name_1, video_name_2, parallel_run_settings):
     return word_stats
 
 
-def create_pitchvol_words(require_pitch_vol):
+def create_pitchvol_words(video_name_1, video_name_2, parallel_run_settings, require_pitch_vol):
     '''
 
     :param word_stats:

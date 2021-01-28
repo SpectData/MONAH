@@ -42,24 +42,28 @@ def weave_vpa(video_1, video_2, delay, tone, speech_rate, au_action, posiface, s
     # TODO: write if statements to detect if we can skip some steps
     # exa.run_extracting_audio(parallel_run_settings)
     # gst.run_google_speech_to_text(video_1, video_2, parallel_run_settings)
-    opf.run_open_face(video_1, video_2, parallel_run_settings)
-    wvt.run_weaving_talkturn(video_1, video_2, parallel_run_settings,
-                             input_filepath=os.path.join(parallel_run_settings['csv_path'],
-                                                         video_name_1 + '_' + video_name_2,
-                                                         'Stage_1',
-                                                         "word_transcripts.csv"),
-                             output_filepath=os.path.join(parallel_run_settings['csv_path'],
-                                                          video_name_1 + '_' + video_name_2,
-                                                          'Stage_2',
-                                                          'weaved talkturns.csv'))
-    exv.run_vokaturi(video_1, video_2, parallel_run_settings)
+    # opf.run_open_face(video_1, video_2, parallel_run_settings)
+    # wvt.run_weaving_talkturn(video_1, video_2, parallel_run_settings,
+    #                         input_filepath=os.path.join(parallel_run_settings['csv_path'],
+    #                                                     video_name_1 + '_' + video_name_2,
+    #                                                     'Stage_1',
+    #                                                     "word_transcripts.csv"),
+    #                         output_filepath=os.path.join(parallel_run_settings['csv_path'],
+    #                                                      video_name_1 + '_' + video_name_2,
+    #                                                      'Stage_2',
+    #                                                      'weaved talkturns.csv'))
+    # exv.run_vokaturi(video_1, video_2, parallel_run_settings)
     print("Done data processing - Stage 1")
 
     print('Stage 1 Time: ', datetime.now() - start)
     start = datetime.now()
 
     # Stage 2 runs - processed tables
+    # About 19 seconds
     tpv.create_talkturn_pitch_vol(video_1, video_2, parallel_run_settings, require_pitch_vol=True)
+
+    # TODO: to resume here, all downstream reference to 'weaved talkturn.csv' should change
+    # to 'talkturn_pitch_vol.csv'
 
     tfp.combine_prosody_features(video_1, video_2, parallel_run_settings)
     tfa.combine_actions_features(video_1, video_2, parallel_run_settings)
