@@ -7,6 +7,7 @@ from datetime import datetime
 import Python.Data_Preprocessing.Stage_1.Audio_files_manipulation.copy_mp4_files as cmf
 import Python.Data_Preprocessing.Stage_2.Actions.talkturn_family_actions as tfa
 import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_family_prosody as tfp
+import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_pitch_vol as tpv
 import Python.Data_Preprocessing.Stage_3.narrative_fine as atb
 import Python.Data_Preprocessing.config.dir_config as prs
 
@@ -58,8 +59,11 @@ def weave_vpa(video_1, video_2, delay, tone, speech_rate, au_action, posiface, s
     start = datetime.now()
 
     # Stage 2 runs - processed tables
+    tpv.create_talkturn_pitch_vol(video_1, video_2, parallel_run_settings, require_pitch_vol=True)
+
     tfp.combine_prosody_features(video_1, video_2, parallel_run_settings)
     tfa.combine_actions_features(video_1, video_2, parallel_run_settings)
+
     print("Done data processing - Stage 2")
 
     print('Stage 2 Time: ', datetime.now() - start)

@@ -290,7 +290,7 @@ def annotate_pitch(video_name_1, video_name_2, parallel_run_settings):
     return word_stats
 
 
-def create_pitchvol_words(require_pitch_vol, word_stats=None):
+def create_pitchvol_words(require_pitch_vol):
     '''
 
     :param word_stats:
@@ -299,6 +299,7 @@ def create_pitchvol_words(require_pitch_vol, word_stats=None):
     '''
 
     if require_pitch_vol:
+        word_stats = annotate_pitch(video_name_1, video_name_2, parallel_run_settings)
 
         has_annotations = word_stats[
             (word_stats['pitch_annotation'].notna()) | \
@@ -376,4 +377,3 @@ if __name__ == '__main__':
 
     video_name_1 = 'Ses01F_F'
     video_name_2 = 'Ses01F_M'
-    word_stats = annotate_pitch(video_name_1, video_name_2, parallel_run_settings)
