@@ -6,10 +6,13 @@
 
 import json
 import os
+import shutil
 
 import pandas as pd
 import pyodbc
 from azure.storage.blob import BlobServiceClient
+
+import Python.Data_Preprocessing.config.dir_config as prs
 
 
 def readSecret():
@@ -83,7 +86,11 @@ def get_keys_to_work_through():
     Video ID/ primary keys to iterate over
     :return:
     '''
-    configDic = readSecret()
+    # configDic = readSecret()
+    parallel_run_settings = prs.get_parallel_run_settings('joshua_linux')
+
+    wav_library_folder = '/mnt/S/researchdata/IEMOCAP/iemocap-split'
+    avi_library_folder = '/mnt/S/researchdata/IEMOCAP/iemocap-split-avi'
 
     engine = get_sqlalchemy_engine()
     sql = '''
@@ -94,3 +101,21 @@ def get_keys_to_work_through():
       '''
 
     left_frame = pd.read_sql(sql, engine)
+
+    idx = 0
+    row_i = left_frame.iloc[idx]
+    row_i
+    avi_f = os.path.join(avi_library_folder, row_i['video_ID'] + '_F.avi')
+    avi_m = os.path.join(avi_library_folder, row_i['video_ID'] + '_M.avi')
+    wav_f = os.path.join(wav_library_folder, row_i['video_ID'] + '_F.wav')
+    wav_m = os.path.join(wav_library_folder, row_i['video_ID'] + '_M.wav')
+
+    # Copy avi and wav files from network drive into working directory
+    shutil.copy(src=avi_f, dst=parallel_run_settings['avi_path'])
+    shutil.copy(src=avi_m, dst=parallel_run_settings['avi_path'])
+    shutil.copy(src=wav_f, dst=parallel_run_settings['wav_path'])
+    shutil.copy(src=wav_m, dst=parallel_run_settings['wav_path'])
+
+    # Download word transcripts from database
+    # (to simulate as if this is done by Google speech to text)
+    # To resume here
