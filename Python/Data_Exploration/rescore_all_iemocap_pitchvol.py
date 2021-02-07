@@ -116,6 +116,27 @@ def get_keys_to_work_through():
     shutil.copy(src=wav_f, dst=parallel_run_settings['wav_path'])
     shutil.copy(src=wav_m, dst=parallel_run_settings['wav_path'])
 
-    # Download word transcripts from database
+    # Download 2X word transcripts from database into 1x word transcript.
     # (to simulate as if this is done by Google speech to text)
     # To resume here
+    # Check how Marriane stored the word_transcript csv.
+    '''
+    gst.run_google_speech_to_text(video_1, video_2, parallel_run_settings)
+['Ses01F_impro01_F.wav', 'Ses01F_impro01_M.wav']
+Waiting for operation to complete...
+Completed!
+Waiting for operation to complete...
+Completed!
+Successfully inserted data to utterance_transcripts.csv
+Successfully inserted data to word_transcripts.csv
+'''
+
+    audio_id_m = row_i['video_ID'] + '_M'
+    audio_id_f = row_i['video_ID'] + '_F'
+
+    sql = '''
+          SELECT DISTINCT video_ID
+          FROM [iemocap].[Narrative_Fine2]
+          WHERE family ='vpa'
+          ORDER BY video_ID
+          '''
