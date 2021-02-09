@@ -13,6 +13,12 @@ import pyodbc
 from azure.storage.blob import BlobServiceClient
 
 import Python.Data_Preprocessing.config.dir_config as prs
+import Python.Data_Preprocessing.Stage_1.Audio_files_manipulation.copy_mp4_files as cmf
+import Python.Data_Preprocessing.Stage_2.Actions.talkturn_family_actions as tfa
+import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_family_prosody as tfp
+import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_pitch_vol as tpv
+import Python.Data_Preprocessing.Stage_3.narrative_fine as atb
+import Python.Data_Preprocessing.config.dir_config as prs
 
 
 def readSecret():
@@ -105,16 +111,14 @@ def get_keys_to_work_through():
     idx = 0
     row_i = left_frame.iloc[idx]
     row_i
+
+    # Only need avi and not wav files because wav extraction needs to be mono
     avi_f = os.path.join(avi_library_folder, row_i['video_ID'] + '_F.avi')
     avi_m = os.path.join(avi_library_folder, row_i['video_ID'] + '_M.avi')
-    wav_f = os.path.join(wav_library_folder, row_i['video_ID'] + '_F.wav')
-    wav_m = os.path.join(wav_library_folder, row_i['video_ID'] + '_M.wav')
 
-    # Copy avi and wav files from network drive into working directory
+    # Copy avi files from network drive into working directory
     shutil.copy(src=avi_f, dst=parallel_run_settings['avi_path'])
     shutil.copy(src=avi_m, dst=parallel_run_settings['avi_path'])
-    shutil.copy(src=wav_f, dst=parallel_run_settings['wav_path'])
-    shutil.copy(src=wav_m, dst=parallel_run_settings['wav_path'])
 
     # Download 2X word transcripts from database into 1x word transcript.
     # (to simulate as if this is done by Google speech to text)
@@ -134,9 +138,53 @@ Successfully inserted data to word_transcripts.csv
     audio_id_m = row_i['video_ID'] + '_M'
     audio_id_f = row_i['video_ID'] + '_F'
 
-    sql = '''
-          SELECT DISTINCT video_ID
-          FROM [iemocap].[Narrative_Fine2]
-          WHERE family ='vpa'
-          ORDER BY video_ID
+    sql = f'''
+    SELECT [Audio_ID], [word], [start_time]
+    FROM [iemocap].[word_timing_transcripts]
+    WHERE Audio_ID LIKE ('{row_i['video_ID']}%')
+    GROUP BY [Audio_ID], [word], [start_time]
+    ORDER BY [Audio_ID], [start_time]
           '''
+
+    words = pd.read_sql(sql, engine)
+    opf.run_open_face(video_1, video_2, parallel_run_settings)
+    wvt.run_weaving_talkturn(video_1, video_2, parallel_run_settings,
+                             input_filepath=os.path.join(parallel_run_settings['csv_path'],
+                                                         video_name_1 + '_' + video_name_2,
+                                                         'Stage_1',
+                                                         "word_transcripts.csv"),
+                             output_filepath=os.path.join(parallel_run_settings['csv_path'],
+                                                          video_name_1 + '_' + video_name_2,
+                                                          'Stage_2',
+                                                          'weaved talkturns.csv'))
+    exv.run_vokaturi(video_1, video_2, parallel_run_settings)
+    print("Done data processing - Stage 1")
+
+    print('Stage 1 Time: ', datetime.now() - start)
+    start = datetime.now()
+
+    # Stage 2 runs - processed tables
+    # About 19 seconds
+    tpv.create_talkturn_pitch_vol(video_1, video_2, parallel_run_settings, require_pitch_vol=True)
+
+    # TODO: to resume here, all downstream reference to 'weaved talkturn.csv' should change
+    # to 'talkturn_pitch_vol.csv'
+
+    tfp.combine_prosody_features(video_1, video_2, parallel_run_settings)
+    tfa.combine_actions_features(video_1, video_2, parallel_run_settings)
+
+    print("Done data processing - Stage 2")
+
+    print('Stage 2 Time: ', datetime.now() - start)
+    start = datetime.now()
+
+    # Stage 3 - runs - text blob narratives
+    atb.weave_narrative(video_1, video_2,
+                        delay, tone, speech_rate,
+                        au_action, posiface, smile,
+                        headnod, leanforward,
+                        parallel_run_settings)
+    print("Done data processing - Stage 3")
+
+    print('Stage 3 Time: ', datetime.now() - start)
+    print('All Stages Run Time: ', datetime.now() - overall_start)
