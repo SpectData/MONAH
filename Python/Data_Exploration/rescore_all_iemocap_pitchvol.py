@@ -8,12 +8,17 @@ import json
 import os
 import shutil
 
+from datetime import datetime
+
 import pandas as pd
 import pyodbc
 from azure.storage.blob import BlobServiceClient
 
 import Python.Data_Preprocessing.config.dir_config as prs
+import Python.Data_Preprocessing.Stage_1.OpenFace.execute_open_face_to_dataset as opf
 import Python.Data_Preprocessing.Stage_1.Audio_files_manipulation.copy_mp4_files as cmf
+import Python.Data_Preprocessing.Stage_1.Vokaturi.execute_vokaturi as exv
+import Python.Data_Preprocessing.Stage_2.Verbatim.execute_weaving_talkturn as wvt
 import Python.Data_Preprocessing.Stage_2.Actions.talkturn_family_actions as tfa
 import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_family_prosody as tfp
 import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_pitch_vol as tpv
@@ -135,8 +140,10 @@ Successfully inserted data to utterance_transcripts.csv
 Successfully inserted data to word_transcripts.csv
 '''
 
-    audio_id_m = row_i['video_ID'] + '_M'
-    audio_id_f = row_i['video_ID'] + '_F'
+    video_1 = row_i['video_ID'] + '_M'
+    video_2 = row_i['video_ID'] + '_F'
+
+    cmf.run_creating_directories(video_1, video_2, parallel_run_settings)
 
     sql = f'''
     SELECT [Audio_ID], [word], [start_time]
@@ -147,21 +154,24 @@ Successfully inserted data to word_transcripts.csv
           '''
 
     words = pd.read_sql(sql, engine)
+
+    words.to_csv(os.path.join(parallel_run_settings['csv_path'],
+                              video_1 + '_' + video_2,
+                              'Stage_1',
+                              "word_transcripts.csv"), index=False)
+
     opf.run_open_face(video_1, video_2, parallel_run_settings)
     wvt.run_weaving_talkturn(video_1, video_2, parallel_run_settings,
                              input_filepath=os.path.join(parallel_run_settings['csv_path'],
-                                                         video_name_1 + '_' + video_name_2,
+                                                         video_1 + '_' + video_2,
                                                          'Stage_1',
                                                          "word_transcripts.csv"),
                              output_filepath=os.path.join(parallel_run_settings['csv_path'],
-                                                          video_name_1 + '_' + video_name_2,
+                                                          video_1 + '_' + video_2,
                                                           'Stage_2',
                                                           'weaved talkturns.csv'))
     exv.run_vokaturi(video_1, video_2, parallel_run_settings)
     print("Done data processing - Stage 1")
-
-    print('Stage 1 Time: ', datetime.now() - start)
-    start = datetime.now()
 
     # Stage 2 runs - processed tables
     # About 19 seconds

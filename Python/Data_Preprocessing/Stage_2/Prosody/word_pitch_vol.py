@@ -298,6 +298,8 @@ def create_pitchvol_words(video_name_1, video_name_2, parallel_run_settings, req
     :return:
     '''
 
+    # video_name_1 = video_1
+    # video_name_2 = video_2
     if require_pitch_vol:
         word_stats = annotate_pitch(video_name_1, video_name_2, parallel_run_settings)
 
