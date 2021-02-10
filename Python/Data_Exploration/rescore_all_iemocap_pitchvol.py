@@ -183,18 +183,37 @@ Successfully inserted data to word_transcripts.csv
     tfp.combine_prosody_features(video_1, video_2, parallel_run_settings)
     tfa.combine_actions_features(video_1, video_2, parallel_run_settings)
 
+    '''
+    Traceback (most recent call last):
+  File "<input>", line 9, in <module>
+  File "/mnt/G/Github/MONAH/Python/Data_Preprocessing/Stage_2/Prosody/talkturn_family_prosody.py", line 116, in combine_prosody_features
+    dfr = pd.merge(dfr, df_, how='outer', on=['audio_id', 'speaker', 'talkturn no'])
+  File "/home/joshua/anaconda3/envs/MONAH/lib/python3.7/site-packages/pandas/core/reshape/merge.py", line 87, in merge
+    validate=validate,
+  File "/home/joshua/anaconda3/envs/MONAH/lib/python3.7/site-packages/pandas/core/reshape/merge.py", line 656, in __init__
+    self._maybe_coerce_merge_keys()
+  File "/home/joshua/anaconda3/envs/MONAH/lib/python3.7/site-packages/pandas/core/reshape/merge.py", line 1165, in _maybe_coerce_merge_keys
+    raise ValueError(msg)
+ValueError: You are trying to merge on int64 and object columns. If you wish to proceed you should use pd.concat
+'''
     print("Done data processing - Stage 2")
-
-    print('Stage 2 Time: ', datetime.now() - start)
-    start = datetime.now()
 
     # Stage 3 - runs - text blob narratives
     atb.weave_narrative(video_1, video_2,
-                        delay, tone, speech_rate,
-                        au_action, posiface, smile,
-                        headnod, leanforward,
-                        parallel_run_settings)
+                        delay=1,
+                        tone=1,
+                        speech_rate=1,
+                        au_action=1,
+                        posiface=1,
+                        smile=1,
+                        headnod=1,
+                        leanforward=1,
+                        parallel_run_settings=parallel_run_settings)
     print("Done data processing - Stage 3")
 
-    print('Stage 3 Time: ', datetime.now() - start)
-    print('All Stages Run Time: ', datetime.now() - overall_start)
+    # Upload narative_fine
+
+    narrative_fine = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
+                                              video_1 + '_' + video_2,
+                                              "Stage_3",
+                                              "narrative_fine.csv"))

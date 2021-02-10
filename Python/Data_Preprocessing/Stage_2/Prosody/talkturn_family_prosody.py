@@ -52,6 +52,8 @@ def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
     Combine normalize feature values
     :return: none
     '''
+    # video_name_1 = video_1
+    # video_name_2 = video_2
     prosody_start = datetime.now()
     start = datetime.now()
     wpm.extract_speech_rate(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
@@ -112,8 +114,25 @@ def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
     dfs = [wpm_summary, delay_summary, vokaturi_summary_1, vokaturi_summary_2,
            vokaturi_summary_3, vokaturi_summary_4, vokaturi_summary_5]
     dfr = dfs[0]
+
     for df_ in dfs[1:]:
         dfr = pd.merge(dfr, df_, how='outer', on=['audio_id', 'speaker', 'talkturn no'])
+
+    # Error message
+    # Traceback (most recent call last):
+    #   File "<input>", line 1, in <module>
+    #   File "/mnt/G/Github/MONAH/Python/Data_Preprocessing/Stage_2/Prosody/talkturn_family_prosody.py", line 116, in combine_prosody_features
+    #     dfr = pd.merge(dfr, df_, how='outer', on=['audio_id', 'speaker', 'talkturn no'])
+    #   File "/home/joshua/anaconda3/envs/MONAH/lib/python3.7/site-packages/pandas/core/reshape/merge.py", line 87, in merge
+    #     validate=validate,
+    #   File "/home/joshua/anaconda3/envs/MONAH/lib/python3.7/site-packages/pandas/core/reshape/merge.py", line 656, in __init__
+    #     self._maybe_coerce_merge_keys()
+    #   File "/home/joshua/anaconda3/envs/MONAH/lib/python3.7/site-packages/pandas/core/reshape/merge.py", line 1165, in _maybe_coerce_merge_keys
+    #     raise ValueError(msg)
+    # ValueError: You are trying to merge on int64 and object columns. If you wish to proceed you should use pd.concat
+    # Why do I see M/F in talkturn no?
+    dfr[['audio_id', 'speaker', 'talkturn no']].dtypes
+    df_[['audio_id', 'speaker', 'talkturn no']].dtypes
 
     dfr = dfr.fillna(0)
     dfr.to_csv(os.path.join(parallel_run_settings['csv_path'],
