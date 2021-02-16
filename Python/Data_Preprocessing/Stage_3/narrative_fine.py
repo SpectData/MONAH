@@ -159,7 +159,7 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
     :return: none
     '''
     # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
-
+    # TODO: Change this to pitch and volume csv.
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,
                                         'Stage_2',
