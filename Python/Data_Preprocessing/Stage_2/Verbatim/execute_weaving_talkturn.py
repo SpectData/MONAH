@@ -3,6 +3,7 @@ This script combines the output of google speech to text into talkturns
 '''
 
 import gc
+import os
 import logging
 
 import pandas as pd
@@ -120,3 +121,14 @@ def run_weaving_talkturn(video_name_1, video_name_2, parallel_run_settings,
 
 if __name__ == '__main__':
     parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    run_weaving_talkturn(video_name_1='Ses01F_F',
+                         video_name_2='Ses01F_M',
+                         parallel_run_settings=parallel_run_settings,
+                         input_filepath=os.path.join(parallel_run_settings['csv_path'],
+                                                     'Ses01F_F' + '_' + 'Ses01F_M',
+                                                     'Stage_1',
+                                                     "word_transcripts.csv"),
+                         output_filepath=os.path.join(parallel_run_settings['csv_path'],
+                                                      'Ses01F_F' + '_' + 'Ses01F_M',
+                                                      'Stage_2',
+                                                      'weaved talkturns.csv'))

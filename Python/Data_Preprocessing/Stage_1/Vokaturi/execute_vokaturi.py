@@ -10,6 +10,7 @@ import scipy.io.wavfile
 from tqdm import tqdm
 
 import Python.Data_Preprocessing.Stage_1.Vokaturi.cut_wav_file as cwf
+import Python.Data_Preprocessing.config.dir_config as prs
 import Python.Data_Preprocessing.config.config as cfg
 
 
@@ -99,6 +100,7 @@ def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
             if file.endswith('.wav') and not file.startswith('._'):
                 print(file)
                 talkturn_id_complete = file[0:-4]
+                integers = [int(s) for s in talkturn_id_complete.split("_") if s.isdigit()]
                 full_path = os.path.abspath(os.path.join(root, file))
                 result = analyze_wav(full_path, parallel_run_settings=parallel_run_settings)
                 if result:
@@ -110,7 +112,7 @@ def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
                                                                if x['video_id'] == video_name_1
                                                                else cfg.parameters_cfg['speaker_2'],
                                                                axis=1)
-                    df_emotions['talkturn no'] = talkturn_id_complete.split("_")[2]
+                    df_emotions['talkturn no'] = integers[-1]
                     df_emotions['audio_id'] = talkturn_id_complete.split("_")[0]
                     df_emotions = df_emotions[
                         ['video_id', 'audio_id', 'speaker', 'talkturn no', 'neutrality', 'happiness',
@@ -136,4 +138,7 @@ def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
 
 
 if __name__ == '__main__':
-    run_vokaturi(video_name_1="Ses01F_F", video_name_2="Ses01F_M")
+    parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    run_vokaturi(video_name_1="Ses01F_F",
+                 video_name_2="Ses01F_M",
+                 parallel_run_settings=parallel_run_settings)
