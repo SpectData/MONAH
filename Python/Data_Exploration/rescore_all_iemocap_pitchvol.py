@@ -177,26 +177,13 @@ Successfully inserted data to word_transcripts.csv
     # About 19 seconds
     tpv.create_talkturn_pitch_vol(video_1, video_2, parallel_run_settings, require_pitch_vol=True)
 
-    # TODO: to resume here, all downstream reference to 'weaved talkturn.csv' should change
-    # to 'talkturn_pitch_vol.csv'
-
     tfp.combine_prosody_features(video_1, video_2, parallel_run_settings)
     tfa.combine_actions_features(video_1, video_2, parallel_run_settings)
 
-    '''
-    Traceback (most recent call last):
-  File "<input>", line 9, in <module>
-  File "/mnt/G/Github/MONAH/Python/Data_Preprocessing/Stage_2/Prosody/talkturn_family_prosody.py", line 116, in combine_prosody_features
-    dfr = pd.merge(dfr, df_, how='outer', on=['audio_id', 'speaker', 'talkturn no'])
-  File "/home/joshua/anaconda3/envs/MONAH/lib/python3.7/site-packages/pandas/core/reshape/merge.py", line 87, in merge
-    validate=validate,
-  File "/home/joshua/anaconda3/envs/MONAH/lib/python3.7/site-packages/pandas/core/reshape/merge.py", line 656, in __init__
-    self._maybe_coerce_merge_keys()
-  File "/home/joshua/anaconda3/envs/MONAH/lib/python3.7/site-packages/pandas/core/reshape/merge.py", line 1165, in _maybe_coerce_merge_keys
-    raise ValueError(msg)
-ValueError: You are trying to merge on int64 and object columns. If you wish to proceed you should use pd.concat
-'''
     print("Done data processing - Stage 2")
+
+    # TODO: to resume here, all downstream reference to 'weaved talkturn.csv' should change
+    # to 'talkturn_pitch_vol.csv'
 
     # Stage 3 - runs - text blob narratives
     atb.weave_narrative(video_1, video_2,
