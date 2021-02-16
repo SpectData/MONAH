@@ -5,7 +5,7 @@ dependencies:
   - _libgcc_mutex=0.1=main
   - attrs=20.3.0=pyhd3eb1b0_0
   - blas=1.0=mkl
-  - ca-certificates=2020.12.8=h06a4308_0
+  - ca-certificates=2021.1.19=h06a4308_0
   - certifi=2020.12.5=py37h06a4308_0
   - cycler=0.10.0=py37_0
   - dbus=1.13.18=hb2f20db_0
@@ -51,6 +51,7 @@ dependencies:
   - pip=20.3.1=py37h06a4308_0
   - pluggy=0.13.1=py37_0
   - py=1.9.0=py_0
+  - pyodbc=4.0.30=py37he6710b0_0
   - pyparsing=2.4.7=py_0
   - pyqt=5.9.2=py37h05f1152_2
   - pytest=6.1.2=py37h06a4308_0
@@ -61,19 +62,26 @@ dependencies:
   - setuptools=51.0.0=py37h06a4308_2
   - sip=4.19.8=py37hf484d3e_0
   - six=1.15.0=py37h06a4308_0
+  - sqlalchemy=1.3.21=py37h27cfd23_0
   - sqlite=3.33.0=h62c20be_0
   - tk=8.6.10=hbc83047_0
   - toml=0.10.1=py_0
   - tornado=6.1=py37h27cfd23_0
+  - unixodbc=2.3.9=h7b6447c_0
   - wheel=0.36.1=pyhd3eb1b0_0
   - xz=5.2.5=h7b6447c_0
   - zipp=3.4.0=pyhd3eb1b0_0
   - zlib=1.2.11=h7b6447c_3
   - zstd=1.4.5=h9ceee32_0
   - pip:
+      - adjusttext==0.7.3
+      - astroid==2.4.2
+      - azure-core==1.10.0
+      - azure-storage-blob==12.7.1
       - cachetools==4.2.0
       - cffi==1.14.4
       - chardet==4.0.0
+      - cryptography==3.3.1
       - decorator==4.4.2
       - google-api-core==1.24.1
       - google-auth==1.24.0
@@ -87,10 +95,16 @@ dependencies:
       - idna==2.10
       - imageio==2.9.0
       - imageio-ffmpeg==0.4.2
+      - isodate==0.6.0
+      - isort==5.7.0
+      - lazy-object-proxy==1.4.3
       - libcst==0.3.16
+      - mccabe==0.6.1
       - moviepy==1.0.3
+      - msrest==0.6.19
       - mypy-extensions==0.4.3
       - numpy==1.19.4
+      - oauthlib==3.1.0
       - pandas==1.1.5
       - praat-parselmouth==0.3.3
       - proglog==0.1.9
@@ -100,15 +114,19 @@ dependencies:
       - pyasn1-modules==0.2.8
       - pycparser==2.20
       - pydub==0.24.1
+      - pylint==2.6.0
       - pytz==2020.4
       - pyyaml==5.3.1
       - requests==2.25.1
+      - requests-oauthlib==1.3.0
       - rsa==4.6
       - scipy==1.5.4
       - seaborn==0.11.0
       - tqdm==4.54.1
+      - typed-ast==1.4.2
       - typing-extensions==3.7.4.3
       - typing-inspect==0.6.0
       - urllib3==1.26.2
+      - wrapt==1.12.1
 prefix: /home/joshua/anaconda3/envs/MONAH
 

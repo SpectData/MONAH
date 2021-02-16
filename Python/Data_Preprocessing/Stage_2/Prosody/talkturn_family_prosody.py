@@ -113,8 +113,12 @@ def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
 
     dfs = [wpm_summary, delay_summary, vokaturi_summary_1, vokaturi_summary_2,
            vokaturi_summary_3, vokaturi_summary_4, vokaturi_summary_5]
-    dfr = dfs[0]
 
+    # Initiate the zero as the start dataframe
+    dfr = dfs[0]
+    df_ = dfs[2]
+
+    # Therefore, start with index 1 since 0 is initiated
     for df_ in dfs[1:]:
         dfr = pd.merge(dfr, df_, how='outer', on=['audio_id', 'speaker', 'talkturn no'])
 
