@@ -1,4 +1,5 @@
 '''
+
 This should not be a secrets file. To be renamed as directory_setup
 #TODO: Joshua to coordinate the migration of this out of the secrets folder
 #TODO: Joshua to ensure that (1) EVERY setting is used
@@ -86,10 +87,10 @@ def get_parallel_run_settings(computer_name):
     parallel_run_settings['talkturn_wav_path'] = None
 
     if computer_name == 'marriane_win':
-        parallel_run_settings['MONAH'] = str(pathlib.Path("E:\iemocap"))
+        parallel_run_settings['MONAH'] = str(pathlib.Path("E:/iemocap"))
 
         parallel_run_settings['feature_extraction_path'] = str(
-            pathlib.Path("E:\OpenFace_2.2.0_win_x64 Josh\OpenFace_2.2.0_win_x64"))
+            pathlib.Path("E:/OpenFace_2.2.0_win_x64 Josh/OpenFace_2.2.0_win_x64"))
 
         parallel_run_settings['offset_multiple'] = 0
 
@@ -121,3 +122,6 @@ def get_parallel_run_settings(computer_name):
     parallel_run_settings = _auto_populate_derivative_directories(parallel_run_settings)
 
     return parallel_run_settings
+
+if __name__ == '__main__':
+    get_parallel_run_settings('marriane_linux')
