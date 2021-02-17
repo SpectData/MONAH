@@ -124,4 +124,5 @@ def get_parallel_run_settings(computer_name):
     return parallel_run_settings
 
 if __name__ == '__main__':
-    get_parallel_run_settings('marriane_linux')
+    get_parallel_run_settings('marriane_win')
+    

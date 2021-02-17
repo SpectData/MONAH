@@ -5,7 +5,7 @@ This script uses google speech to text to transcribe text from the wav files
 import os
 
 import pandas as pd
-
+import Python.Data_Preprocessing.config.dir_config as cfg
 import Python.Data_Preprocessing.Stage_1.Google_speech_to_text.download_wav as dw
 import Python.Data_Preprocessing.Stage_1.Google_speech_to_text.transcribe_wav_file as twf
 import Python.Data_Preprocessing.Stage_1.Google_speech_to_text.upload_to_gcs as utg
@@ -58,4 +58,7 @@ def run_google_speech_to_text(video_name_1, video_name_2, parallel_run_settings)
                     table_name="word_transcripts")
 
 if __name__ == '__main__':
-    run_google_speech_to_text(video_name_1="zoom_F", video_name_2="zoom_M")
+    parallel_run_settings = cfg.get_parallel_run_settings("marriane_win")
+    run_google_speech_to_text(video_name_1="zoom_F",
+                              video_name_2="zoom_M",
+                              parallel_run_settings=parallel_run_settings)

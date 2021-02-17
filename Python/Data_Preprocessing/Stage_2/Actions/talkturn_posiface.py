@@ -49,4 +49,6 @@ def compute_posiface(video_name_1, video_name_2, parallel_run_settings):
                     index=False)
 
 if __name__ == '__main__':
-    compute_posiface(video_name_1='Ses01F_F', video_name_2='Ses01F_M')
+    compute_posiface(video_name_1='Ses01F_F',
+                     video_name_2='Ses01F_M',
+                     parallel_run_settings=parallel_run_settings)

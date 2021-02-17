@@ -10,6 +10,7 @@ import pandas as pd
 
 import Python.Data_Preprocessing.Stage_1.Google_speech_to_text.execute_google_speech_to_text as gst
 import Python.Data_Preprocessing.config.config as cfg
+import Python.Data_Preprocessing.config.dir_config as prs
 
 
 def run_weaving_talkturn(video_name_1, video_name_2, parallel_run_settings):
@@ -25,7 +26,6 @@ def run_weaving_talkturn(video_name_1, video_name_2, parallel_run_settings):
                                        video_name_1 + '_' + video_name_2,
                                        'Stage_1',
                                        "word_transcripts.csv"))
-    df_word['speaker_tag'] = df_word.Audio_ID.apply(lambda x: x.split("_")[1])
     df_word['speaker_tag'] = df_word.apply(lambda x:
                                            cfg.parameters_cfg['speaker_1']
                                            if x['Audio_ID'] == video_name_1 else
@@ -121,4 +121,6 @@ def run_weaving_talkturn(video_name_1, video_name_2, parallel_run_settings):
     gc.collect()
 
 if __name__ == '__main__':
-    run_weaving_talkturn(video_name_1='zoom_F', video_name_2='zoom_M')
+    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    run_weaving_talkturn(video_name_1='zoom_F', video_name_2='zoom_M',
+                         parallel_run_settings=parallel_run_settings)
