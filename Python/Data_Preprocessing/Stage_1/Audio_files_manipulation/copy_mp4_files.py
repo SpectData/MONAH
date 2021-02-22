@@ -6,6 +6,7 @@ import os
 
 import pandas as pd
 from tqdm import tqdm
+import Python.Data_Preprocessing.config.dir_config as prs
 
 
 def get_local_list_files(video_name_1, video_name_2, file_format, parallel_run_settings):
@@ -64,8 +65,12 @@ def run_creating_directories(video_name_1, video_name_2, parallel_run_settings):
             os.makedirs(sub_dir)
 
 if __name__ == '__main__':
-    LOCAL_FILES = get_local_list_files(video_name_1='zoom_F',
-                                       video_name_2='zoom_M',
-                                       file_format="avi")
+    parallel_run_settings = prs.get_parallel_run_settings('marriane_linux')
+    LOCAL_FILES = get_local_list_files(video_name_1='Ses01F_impro01_F',
+                                       video_name_2='Ses01F_impro01_M',
+                                       file_format="avi",
+                                       parallel_run_settings=parallel_run_settings)
     print(LOCAL_FILES)
-    run_creating_directories(video_name_1='zoom_F', video_name_2='zoom_M')
+    run_creating_directories(video_name_1='Ses01F_impro01_F',
+                             video_name_2='Ses01F_impro01_M',
+                             parallel_run_settings=parallel_run_settings)

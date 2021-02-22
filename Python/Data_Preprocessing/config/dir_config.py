@@ -1,4 +1,5 @@
 '''
+
 This should not be a secrets file. To be renamed as directory_setup
 #TODO: Joshua to coordinate the migration of this out of the secrets folder
 #TODO: Joshua to ensure that (1) EVERY setting is used
@@ -124,3 +125,4 @@ def get_parallel_run_settings(computer_name):
 
 if __name__ == '__main__':
     get_parallel_run_settings('marriane_win')
+    

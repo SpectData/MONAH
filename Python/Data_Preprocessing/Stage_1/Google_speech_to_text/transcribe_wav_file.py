@@ -19,14 +19,14 @@ def transcribe_gcs(bucket_name, audio_id, parallel_run_settings):
     :return: word and utterance transcripts
     '''
 
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./data/secrets/69b431b78607.json"
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/datadrive/Github/MONAH/data/secrets/69b431b78607.json"
     # info = mediainfo(os.path.join(parallel_run_settings['wav_path'], audio_id))
     # sample_rate = info['sample_rate']
     sample_rate, data = read_wav(os.path.join(parallel_run_settings['wav_path'], audio_id))
     # channels = info['channels']
     client = speech.SpeechClient()
     gcs_uri = "gs://" + bucket_name + "/" + audio_id
-    audio = speech.types.RecognitionAudio(uri=gcs_uri)
+    audio = {"uri": gcs_uri}
     config = speech.types.RecognitionConfig(
         encoding=speech.enums.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=sample_rate,

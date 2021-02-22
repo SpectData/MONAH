@@ -4,6 +4,7 @@ This script extracts the audio recording from the video file and stores it in a 
 import logging
 import os
 import shutil
+import Python.Data_Preprocessing.config.dir_config as prs
 
 
 def run_extracting_audio(parallel_run_settings):
@@ -31,4 +32,5 @@ def run_extracting_audio(parallel_run_settings):
         logging.info(log_text + video_i)
 
 if __name__ == "__main__":
-    run_extracting_audio()
+    parallel_run_settings = prs.get_parallel_run_settings("marriane_linux")
+    run_extracting_audio(parallel_run_settings=parallel_run_settings)
