@@ -12,7 +12,10 @@ class TestNRF:
                               speech_rate=1,
                               au_action=1,
                               posiface=1,
-                              smile=1, parallel_run_settings=parallel_run_settings)
+                              smile=1,
+                              headnod=1,
+                              leanforward=1,
+                              parallel_run_settings=parallel_run_settings)
 
     def test_init(self):
         assert len(self.dfr) > 0

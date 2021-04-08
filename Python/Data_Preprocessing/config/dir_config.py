@@ -32,6 +32,8 @@ def _auto_populate_derivative_directories(parallel_run_settings):
         os.path.join(parallel_run_settings['MONAH'], 'open_face_csv')))
     parallel_run_settings['talkturn_wav_path'] = str(
         os.path.join(parallel_run_settings['wav_path'], 'talkturn'))
+    parallel_run_settings['test_file_path'] = str(
+        os.path.join(parallel_run_settings['MONAH'], 'test_files'))
 
     parallel_run_settings['Vokaturi_API_Path'] = str(
         pathlib.Path(os.path.join(parallel_run_settings['Vokaturi_Install_Path'], 'api')))
@@ -48,7 +50,7 @@ def _auto_populate_derivative_directories(parallel_run_settings):
 
     # Auto create directories if not present
     keys = ['OpenFace_CSV_Path', 'avi_path', 'wav_path', 'csv_path', 'usb_csv_path',
-            'talkturn_wav_path']
+            'talkturn_wav_path', 'test_file_path']
 
     for key in keys:
         if not os.path.exists(parallel_run_settings[key]):
@@ -85,6 +87,7 @@ def get_parallel_run_settings(computer_name):
     parallel_run_settings['Vokaturi_API_Path'] = None
     parallel_run_settings['Vokaturi_Library_Path'] = None
     parallel_run_settings['talkturn_wav_path'] = None
+    parallel_run_settings['test_file_path'] = None
 
     if computer_name == 'marriane_win':
         parallel_run_settings['MONAH'] = str(pathlib.Path("E:/iemocap"))
