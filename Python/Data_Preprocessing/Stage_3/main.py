@@ -1,7 +1,7 @@
 '''
 Main manager for formulating vpa text_blob
 '''
-
+import os
 from datetime import datetime
 
 import Python.Data_Preprocessing.Stage_1.Audio_files_manipulation.copy_mp4_files as cmf
@@ -11,6 +11,14 @@ import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_pitch_vol as tpv
 import Python.Data_Preprocessing.Stage_3.narrative_fine as atb
 import Python.Data_Preprocessing.config.dir_config as prs
 
+# Stage 1
+import Python.Data_Preprocessing.Stage_1.FFMpeg.execute_extracting_audio as exa
+import Python.Data_Preprocessing.Stage_1.Google_speech_to_text.execute_google_speech_to_text as gst
+import Python.Data_Preprocessing.Stage_1.OpenFace.execute_open_face_to_dataset as opf
+import Python.Data_Preprocessing.Stage_1.Vokaturi.execute_vokaturi as exv
+
+# Stage 2
+import Python.Data_Preprocessing.Stage_2.Verbatim.execute_weaving_talkturn as wvt
 
 class run_settings():
     prs = {}
@@ -26,7 +34,7 @@ def set_video(set_key, set_val):
     print(p1.prs)
 
 
-def weave_vpa(video_1, video_2, delay, tone, speech_rate, au_action, posiface, smile,
+def weave_vpa(video_1, video_2, gstt, delay, tone, speech_rate, au_action, posiface, smile,
               headnod, leanforward, parallel_run_settings):
     '''
     Weave text blob for vpa family
@@ -39,34 +47,61 @@ def weave_vpa(video_1, video_2, delay, tone, speech_rate, au_action, posiface, s
 
     # Stage 1 runs - transcripts
     cmf.run_creating_directories(video_1, video_2, parallel_run_settings)
-    # TODO: write if statements to detect if we can skip some steps
-    # exa.run_extracting_audio(parallel_run_settings)
-    # gst.run_google_speech_to_text(video_1, video_2, parallel_run_settings)
-    # opf.run_open_face(video_1, video_2, parallel_run_settings)
-    # wvt.run_weaving_talkturn(video_1, video_2, parallel_run_settings,
-    #                         input_filepath=os.path.join(parallel_run_settings['csv_path'],
-    #                                                     video_name_1 + '_' + video_name_2,
-    #                                                     'Stage_1',
-    #                                                     "word_transcripts.csv"),
-    #                         output_filepath=os.path.join(parallel_run_settings['csv_path'],
-    #                                                      video_name_1 + '_' + video_name_2,
-    #                                                      'Stage_2',
-    #                                                      'weaved talkturns.csv'))
-    # exv.run_vokaturi(video_1, video_2, parallel_run_settings)
-    print("Done data processing - Stage 1")
 
-    print('Stage 1 Time: ', datetime.now() - start)
-    start = datetime.now()
+    exa.run_extracting_audio(parallel_run_settings)
+
+    if gstt == 0:
+        print("No need to run google speech to text")
+        if os.path.exists(os.path.join(parallel_run_settings['csv_path'],
+                                       video_1 + '_' + video_2,
+                                       'Stage_1',
+                                       'openface_raw.csv')):
+            print("No need to run Open Face")
+        else:
+            opf.run_open_face(video_1, video_2, parallel_run_settings)
+
+        if os.path.exists(os.path.join(parallel_run_settings['csv_path'],
+                                       video_1 + '_' + video_2,
+                                       'Stage_1',
+                                       'talkturn_vokaturi.csv')):
+            print("No need to run vokaturi")
+        else:
+            exv.run_vokaturi(video_1, video_2, gstt, parallel_run_settings)
+
+        print("Done data processing - Stage 1")
+
+        print('Stage 1 Time: ', datetime.now() - start)
+        start = datetime.now()
+
+    else:
+        gst.run_google_speech_to_text(video_1, video_2, parallel_run_settings)
+        wvt.run_weaving_talkturn(video_1, video_2, parallel_run_settings,
+                                 input_filepath=os.path.join(parallel_run_settings['csv_path'],
+                                                             video_1 + '_' + video_2,
+                                                             'Stage_1',
+                                                             "word_transcripts.csv"),
+                                 output_filepath=os.path.join(parallel_run_settings['csv_path'],
+                                                              video_1 + '_' + video_2,
+                                                              'Stage_2',
+                                                              'weaved talkturns_gstt.csv'))
+        # opf.run_open_face(video_1, video_2, parallel_run_settings)
+        exv.run_vokaturi(video_1, video_2, gstt, parallel_run_settings)
+
+        print("Done data processing - Stage 1")
+
+        print('Stage 1 Time: ', datetime.now() - start)
+        start = datetime.now()
+
 
     # Stage 2 runs - processed tables
     # About 19 seconds
-    tpv.create_talkturn_pitch_vol(video_1, video_2, parallel_run_settings, require_pitch_vol=True)
+    # tpv.create_talkturn_pitch_vol(video_1, video_2, parallel_run_settings, require_pitch_vol=True)
 
     # TODO: to resume here, all downstream reference to 'weaved talkturn.csv' should change
     # to 'talkturn_pitch_vol.csv'
 
-    tfp.combine_prosody_features(video_1, video_2, parallel_run_settings)
-    tfa.combine_actions_features(video_1, video_2, parallel_run_settings)
+    tfp.combine_prosody_features(video_1, video_2, gstt, parallel_run_settings)
+    tfa.combine_actions_features(video_1, video_2, gstt, parallel_run_settings)
 
     print("Done data processing - Stage 2")
 
@@ -74,7 +109,7 @@ def weave_vpa(video_1, video_2, delay, tone, speech_rate, au_action, posiface, s
     start = datetime.now()
 
     # Stage 3 - runs - text blob narratives
-    atb.weave_narrative(video_1, video_2,
+    atb.weave_narrative(video_1, video_2, gstt,
                         delay, tone, speech_rate,
                         au_action, posiface, smile,
                         headnod, leanforward,
@@ -86,10 +121,11 @@ def weave_vpa(video_1, video_2, delay, tone, speech_rate, au_action, posiface, s
 
 
 if __name__ == '__main__':
-    parallel_run_settings = prs.get_parallel_run_settings('joshua_linux')
+    parallel_run_settings = prs.get_parallel_run_settings('marriane_linux')
 
     weave_vpa(video_1='Ses01F_F',
               video_2='Ses01F_M',
+              gstt = 1,
               delay=1,
               tone=1,
               speech_rate=1,

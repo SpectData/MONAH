@@ -9,6 +9,7 @@ from datetime import datetime
 
 import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_delay as dly
 import Python.Data_Preprocessing.Stage_2.Prosody.talkturn_wpm as wpm
+import Python.Data_Preprocessing.config.dir_config as prs
 
 
 def get_summary_feature(table_name, column_name):
@@ -47,7 +48,7 @@ def normalize_column_values(table_name, column_name, summary_table):
 
     return dfr
 
-def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
+def combine_prosody_features(video_name_1, video_name_2, gstt, parallel_run_settings):
     '''
     Combine normalize feature values
     :return: none
@@ -56,11 +57,11 @@ def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
     # video_name_2 = video_2
     prosody_start = datetime.now()
     start = datetime.now()
-    wpm.extract_speech_rate(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
+    wpm.extract_speech_rate(video_name_1, video_name_2, gstt, parallel_run_settings=parallel_run_settings)
     print('Stage 2 Prosody SpeechRate Time: ', datetime.now() - start)
 
     start = datetime.now()
-    dly.extract_delay(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
+    dly.extract_delay(video_name_1, video_name_2, gstt, parallel_run_settings=parallel_run_settings)
     print('Stage 2 Prosody Delay Time: ', datetime.now() - start)
 
     # Load dataframes
@@ -148,5 +149,8 @@ def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
     print('Stage 2 Prosody Time: ', datetime.now() - prosody_start)
 
 if __name__ == '__main__':
-    combine_prosody_features(video_name_1='zoom_F',
-                             video_name_2='zoom_M')
+    parallel_run_settings = prs.get_parallel_run_settings("marriane_linux")
+    combine_prosody_features(video_name_1='Ses01F_F',
+                             video_name_2='Ses01F_M',
+                             gstt=1,
+                             parallel_run_settings=parallel_run_settings)

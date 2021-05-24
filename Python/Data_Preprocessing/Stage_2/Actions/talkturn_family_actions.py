@@ -14,37 +14,43 @@ import Python.Data_Preprocessing.Stage_2.Actions.talkturn_head_nod as hnd
 import Python.Data_Preprocessing.Stage_2.Actions.talkturn_lean_forward as lfd
 
 
-def combine_actions_features(video_name_1, video_name_2, parallel_run_settings):
+def combine_actions_features(video_name_1, video_name_2, gstt, parallel_run_settings):
     '''
     combine action features in one summary table
     :return: none
     '''
     action_start = datetime.now()
     start = datetime.now()
-    sml.compute_smile(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
+    sml.compute_smile(video_name_1, video_name_2, gstt, parallel_run_settings=parallel_run_settings)
     print('Stage 2 Action Smile Time: ', datetime.now() - start)
 
     start = datetime.now()
-    psf.compute_posiface(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
+    psf.compute_posiface(video_name_1, video_name_2, gstt, parallel_run_settings=parallel_run_settings)
     print('Stage 2 Action Posiface Time: ', datetime.now() - start)
 
     start = datetime.now()
-    aua.compute_au_actions(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
+    aua.compute_au_actions(video_name_1, video_name_2, gstt, parallel_run_settings=parallel_run_settings)
     print('Stage 2 Action AUs Time: ', datetime.now() - start)
 
     start = datetime.now()
-    hnd.compute_head_nod(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
+    hnd.compute_head_nod(video_name_1, video_name_2, gstt, parallel_run_settings=parallel_run_settings)
     print('Stage 2 Action HeadNod Time: ', datetime.now() - start)
 
     start = datetime.now()
-    lfd.compute_lean_forward(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
+    lfd.compute_lean_forward(video_name_1, video_name_2, gstt, parallel_run_settings=parallel_run_settings)
     print('Stage 2 Action ForwardLean Time: ', datetime.now() - start)
 
     # load dataframes
-    talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                        video_name_1 + "_" + video_name_2,
+    if gstt == 0:
+        talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
+                                        video_name_1 + '_' + video_name_2,
                                         "Stage_2",
                                         "weaved talkturns.csv"))
+    else:
+        talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
+                                            video_name_1 + '_' + video_name_2,
+                                            "Stage_2",
+                                            "weaved talkturns_gstt.csv"))
     talkturn = talkturn[['audio_id', 'speaker', 'talkturn no', 'text', 'start time', 'end time']]
     # smile detected
     smile = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
@@ -101,4 +107,5 @@ if __name__ == '__main__':
     parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
     combine_actions_features(video_name_1='Ses01F_F',
                              video_name_2='Ses01F_M',
+                             gstt=1,
                              parallel_run_settings=parallel_run_settings)

@@ -77,7 +77,7 @@ def analyze_wav(wav_path, parallel_run_settings):
     return emotions
 
 
-def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
+def run_vokaturi(video_name_1, video_name_2, gstt, parallel_run_settings):
     '''
     Extract vokaturi features and stores in a table
     :return: rows with no emotions
@@ -90,7 +90,7 @@ def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
     Vokaturi.load(parallel_run_settings['Vokaturi_Library_Path'])
     print("Analyzed by: %s" % Vokaturi.versionAndLicense())
 
-    cwf.cut_files(video_name_1, video_name_2, parallel_run_settings)
+    cwf.cut_files(video_name_1, video_name_2, gstt, parallel_run_settings)
     no_emotions = []
     emotions = pd.DataFrame()
 
@@ -99,27 +99,31 @@ def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
         for file in files:
             if file.endswith('.wav') and not file.startswith('._'):
                 print(file)
-                talkturn_id_complete = file[0:-4]
-                integers = [int(s) for s in talkturn_id_complete.split("_") if s.isdigit()]
-                full_path = os.path.abspath(os.path.join(root, file))
-                result = analyze_wav(full_path, parallel_run_settings=parallel_run_settings)
-                if result:
-                    df_emotions = pd.DataFrame(result, index=[0])
-                    df_emotions['video_id'] = talkturn_id_complete[0:
-                                                                   (len(talkturn_id_complete.split("_")[2]) + 1)*-1]
-                    df_emotions['speaker'] = df_emotions.apply(lambda x:
-                                                               cfg.parameters_cfg['speaker_1']
-                                                               if x['video_id'] == video_name_1
-                                                               else cfg.parameters_cfg['speaker_2'],
-                                                               axis=1)
-                    df_emotions['talkturn no'] = integers[-1]
-                    df_emotions['audio_id'] = talkturn_id_complete.split("_")[0]
-                    df_emotions = df_emotions[
-                        ['video_id', 'audio_id', 'speaker', 'talkturn no', 'neutrality', 'happiness',
-                         'sadness', 'anger', 'fear']]
-                    emotions = emotions.append(df_emotions)
+                if os.path.getsize(os.path.abspath(os.path.join(root, file))) < 1025:
+                    os.remove(os.path.join(root, file))
                 else:
-                    no_emotions.append(full_path)
+                    talkturn_id_complete = file[0:-4]
+                    integers = [int(s) for s in talkturn_id_complete.split("_") if s.isdigit()]
+                    full_path = os.path.abspath(os.path.join(root, file))
+                    result = analyze_wav(full_path, parallel_run_settings=parallel_run_settings)
+                    if result:
+                        df_emotions = pd.DataFrame(result, index=[0])
+                        df_emotions['video_id'] = talkturn_id_complete[0:
+                                                                       (len(talkturn_id_complete.split("_")[
+                                                                                2]) + 1) * -1]
+                        df_emotions['speaker'] = df_emotions.apply(lambda x:
+                                                                   cfg.parameters_cfg['speaker_1']
+                                                                   if x['video_id'] == video_name_1
+                                                                   else cfg.parameters_cfg['speaker_2'],
+                                                                   axis=1)
+                        df_emotions['talkturn no'] = integers[-1]
+                        df_emotions['audio_id'] = talkturn_id_complete.split("_")[0]
+                        df_emotions = df_emotions[
+                            ['video_id', 'audio_id', 'speaker', 'talkturn no', 'neutrality', 'happiness',
+                             'sadness', 'anger', 'fear']]
+                        emotions = emotions.append(df_emotions)
+                    else:
+                        no_emotions.append(full_path)
 
     print(no_emotions)
     insert_df(emotions_df=emotions, dest_dir=os.path.join(parallel_run_settings['csv_path'],
@@ -138,7 +142,8 @@ def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
 
 
 if __name__ == '__main__':
-    parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    parallel_run_settings = prs.get_parallel_run_settings('marriane_linux')
     run_vokaturi(video_name_1="Ses01F_F",
                  video_name_2="Ses01F_M",
+                 gstt=1,
                  parallel_run_settings=parallel_run_settings)

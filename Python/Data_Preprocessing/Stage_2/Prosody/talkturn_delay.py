@@ -7,16 +7,23 @@ import numpy as np
 import pandas as pd
 
 
-def extract_delay(video_name_1, video_name_2, parallel_run_settings):
+def extract_delay(video_name_1, video_name_2, gstt, parallel_run_settings):
     '''
     Computes for the talkturn delay
     :return: none
     '''
     # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
-    talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                        video_name_1 + '_' + video_name_2,
-                                        "Stage_2",
-                                        'weaved talkturns.csv'))
+    if gstt == 0:
+        talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
+                                            video_name_1 + '_' + video_name_2,
+                                            "Stage_2",
+                                            'weaved talkturns.csv'))
+    else:
+        talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
+                                            video_name_1 + '_' + video_name_2,
+                                            "Stage_2",
+                                            'weaved talkturns_gstt.csv'))
+
     talkturn['previous_speaker'] = talkturn['speaker'].shift()
     talkturn['next_start_time'] = talkturn['start time'].shift(-1)
     talkturn['delay'] = talkturn['next_start_time'] - talkturn['end time']

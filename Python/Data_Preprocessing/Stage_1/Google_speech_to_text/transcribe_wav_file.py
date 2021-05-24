@@ -20,10 +20,10 @@ def transcribe_gcs(bucket_name, audio_id, parallel_run_settings):
     '''
 
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/datadrive/Github/MONAH/data/secrets/69b431b78607.json"
-    # info = mediainfo(os.path.join(parallel_run_settings['wav_path'], audio_id))
-    # sample_rate = info['sample_rate']
-    sample_rate, data = read_wav(os.path.join(parallel_run_settings['wav_path'], audio_id))
-    # channels = info['channels']
+    info = mediainfo(os.path.join(parallel_run_settings['wav_path'], audio_id))
+    sample_rate = int(info['sample_rate'])
+    # sample_rate, data = read_wav(os.path.join(parallel_run_settings['wav_path'], audio_id))
+    channels = int(info['channels'])
     client = speech.SpeechClient()
     gcs_uri = "gs://" + bucket_name + "/" + audio_id
     audio = {"uri": gcs_uri}
@@ -33,7 +33,7 @@ def transcribe_gcs(bucket_name, audio_id, parallel_run_settings):
         language_code='en-US',
         enable_speaker_diarization=True,
         diarization_speaker_count=1,
-        audio_channel_count=1,# channels,
+        audio_channel_count=channels,
         enable_separate_recognition_per_channel=True)
 
     operation = client.long_running_recognize(config, audio)
@@ -73,7 +73,7 @@ def transcribe_gcs(bucket_name, audio_id, parallel_run_settings):
 if __name__ == '__main__':
     parallel_run_settings = cfg.get_parallel_run_settings("marriane_linux")
     RESULT = transcribe_gcs(bucket_name="marriane-bucket",
-                            audio_id="zoom_F.wav",
+                            audio_id="Ses01F_F.wav",
                             parallel_run_settings=parallel_run_settings)
     print(RESULT[0])
     print(RESULT[1])

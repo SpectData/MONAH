@@ -152,7 +152,7 @@ def leanforward_look_up(num):
 
     return df.loc[(df['lb'] <= num) & (num < df['ub']), 'text'].values[0]
 
-def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
+def weave_narrative(video_name_1, video_name_2, gstt, delay, tone, speech_rate,
                     au_action, posiface, smile, headnod, leanforward, parallel_run_settings):
     '''
     Weaves narratives and exports csv
@@ -160,10 +160,16 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
     '''
     # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
     # TODO: Change this to pitch and volume csv.
-    talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                        video_name_1 + '_' + video_name_2,
-                                        'Stage_2',
-                                        'weaved talkturns.csv'))
+    if gstt == 0:
+        talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
+                                            video_name_1 + '_' + video_name_2,
+                                            'Stage_2',
+                                            'weaved talkturns.csv'))
+    else:
+        talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
+                                            video_name_1 + '_' + video_name_2,
+                                            'Stage_2',
+                                            'weaved talkturns_gstt.csv'))
     talkturn['text'] = talkturn['text'].str.replace(r'[^\w\s]+', '')
     talkturn['text'] = talkturn.text.apply(lambda x: x[:-1] if x[-1:] == ' ' else x)
     talkturn['text'] = talkturn.text.apply(lambda x: x[:-1] if x[-1:] == ' ' else x)
@@ -192,6 +198,7 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
         family = ''
 
     dfr['family'] = family
+    dfr['text'] = dfr.text.apply(lambda  x: str(x))
     dfr['text'] = dfr.text.apply(lambda x: x.lower())
     dfr.loc[dfr['happiness_z'] > 2, 'tone'] = 1
     dfr.loc[dfr['anger_z'] > 2, 'tone'] = 2
@@ -286,11 +293,18 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
     assert len(talkturn) == len(dfr)
 
     # Export
-    dfr.to_csv(os.path.join(parallel_run_settings['csv_path'],
-                            video_name_1 + '_' + video_name_2,
-                            "Stage_3",
-                            "narrative_fine.csv"),
-               index=False)
+    if gstt == 0:
+        dfr.to_csv(os.path.join(parallel_run_settings['csv_path'],
+                                video_name_1 + '_' + video_name_2,
+                                "Stage_3",
+                                "narrative_fine.csv"),
+                   index=False)
+    else:
+        dfr.to_csv(os.path.join(parallel_run_settings['csv_path'],
+                                video_name_1 + '_' + video_name_2,
+                                "Stage_3",
+                                "narrative_fine_gstt.csv"),
+                   index=False)
 
     # Log information for user
     logger = logging.getLogger(__name__)
@@ -299,9 +313,10 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
     return dfr
 
 if __name__ == '__main__':
-    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    parallel_run_settings = prs.get_parallel_run_settings("marriane_linux")
     weave_narrative(video_name_1='Ses01F_F',
                     video_name_2='Ses01F_M',
+                    gstt=1,
                     delay=1,
                     tone=1,
                     speech_rate=1,

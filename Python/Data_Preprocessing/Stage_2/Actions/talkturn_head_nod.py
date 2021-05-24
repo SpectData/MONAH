@@ -10,16 +10,22 @@ import Python.Data_Preprocessing.config.config as cfg
 import Python.Data_Preprocessing.config.dir_config as prs
 
 
-def compute_head_nod(video_name_1, video_name_2, parallel_run_settings):
+def compute_head_nod(video_name_1, video_name_2, gstt, parallel_run_settings):
     '''
     Compute for head nod status of the talkturn
     :return: none
     '''
     # Load dataframes
-    talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
+    if gstt == 0:
+        talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,
                                         "Stage_2",
                                         "weaved talkturns.csv"))
+    else:
+        talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
+                                            video_name_1 + '_' + video_name_2,
+                                            "Stage_2",
+                                            "weaved talkturns_gstt.csv"))
     open_face_results = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                                  video_name_1 + '_' + video_name_2,
                                                  "Stage_1",
@@ -86,114 +92,121 @@ def compute_head_nod(video_name_1, video_name_2, parallel_run_settings):
 
     # get previous stable state of each stable state
     stable = helper_1[helper_1['state_a2'] == 'stable']
-    stable = stable.sort_values(by=['video_id', 'frame'])
-    stable['previous_stable_timestamp'] = stable.groupby('video_id')['timestamp'].shift(1)
-    stable['stable_num'] = stable.groupby('video_id')['frame'].rank(method="first", ascending=True)
 
-    # merge base table to helper table
-    base = pd.merge(helper_1, stable, how = 'left', on = ['video_id', 'frame'])
-    base = base[['video_id', 'frame', 'face_id_x', 'timestamp_x', 'y_30_x', 'y_30_b_min_x',
-                'y_30_b_max_x', 'state_a_x', 'state_a2_x', 'previous_stable_timestamp']]
+    if stable.empty:
+        headnod = talkturn
+        headnod = headnod[['video_id', 'speaker', 'talkturn no']]
+        headnod['headnod'] = 0
+    else:
+        stable = stable.sort_values(by=['video_id', 'frame'])
+        stable['previous_stable_timestamp'] = stable.groupby('video_id')['timestamp'].shift(1)
+        stable['stable_num'] = stable.groupby('video_id')['frame'].rank(method="first", ascending=True)
 
-    # find stable cycles having at least two consecutive extremes in between
-    base_2 = pd.DataFrame()
-    for index, row in base.iterrows():
-        video_id = row['video_id']
-        timestamp = row['timestamp_x']
-        previous_stable_timestamp = row['previous_stable_timestamp']
-
-        eligible = base.loc[(base['video_id'] == video_id) &
-                            (base['timestamp_x'] <= timestamp) &
-                            (base['timestamp_x'] >= previous_stable_timestamp)]
-        eligible = eligible[['state_a2_x', 'frame']]
-        eligible.columns = ['state_b', 'frame_b']
-        eligible['video_id'] = video_id
-        eligible['frame'] = row['frame']
-        eligible['face_id'] = row['face_id_x']
-        eligible['timestamp'] = timestamp
-        eligible['y_30_a'] = row['y_30_x']
-        eligible['state_a'] = row['state_a2_x']
-        eligible['previous_stable_timestamp'] = previous_stable_timestamp
-        base_2 = base_2.append(eligible)
-
-    base_2['extreme'] = base_2.state_b.apply(lambda x: 1 if x == 'extreme' else 0)
-    base_3 = base_2.groupby(['video_id', 'frame', 'face_id', 'timestamp', 'y_30_a', 'state_a',
-                             'previous_stable_timestamp']).agg({'extreme': sum}).reset_index()
-    with_extremes = base_3[base_3['extreme'] > 2]
-
-    # get only cycles with extremes
-    base_4 = pd.DataFrame()
-    for index, row in with_extremes.iterrows():
-        video_id = row['video_id']
-        timestamp = row['timestamp']
-        previous_stable_timestamp = row['previous_stable_timestamp']
-        eligible = helper_1.loc[(helper_1['video_id'] == video_id) &
-                                (helper_1['timestamp'] <= timestamp) &
-                                (helper_1['timestamp'] >= previous_stable_timestamp) &
-                                (helper_1['state_a2'] != 'transient')]
-        base_4 = base_4.append(eligible)
-
-    # put unique identifier per cycle
-    stable = pd.merge(base_4[base_4['state_a2'] == 'stable'], stable, how='inner',
-                      on=['video_id', 'frame'])
-    stable = stable[['video_id', 'frame', 'face_id_x', 'timestamp_x', 'y_30_x', 'y_30_b_min_x',
+        # merge base table to helper table
+        base = pd.merge(helper_1, stable, how='left', on=['video_id', 'frame'])
+        base = base[['video_id', 'frame', 'face_id_x', 'timestamp_x', 'y_30_x', 'y_30_b_min_x',
                      'y_30_b_max_x', 'state_a_x', 'state_a2_x', 'previous_stable_timestamp']]
-    stable.columns = ['video_id', 'frame', 'face_id', 'timestamp', 'y_30', 'y_30_b_min',
-                      'y_30_b_max', 'state_a', 'state_a2', 'previous_stable_timestamp']
-    stable['group_num'] = (stable.index / 2 + 1).astype(int)
-    temp_extreme = base_4[base_4['state_a2'] == 'extreme']
 
-    extreme = pd.DataFrame()
-    for index, row in stable.iterrows():
-        video_id = row['video_id']
-        timestamp = row['timestamp']
-        previous_stable_timestamp = row['previous_stable_timestamp']
-        group_num = row['group_num']
-        eligible = temp_extreme[(temp_extreme['video_id'] == video_id) &
-                                (temp_extreme['timestamp'] <= timestamp) &
-                                (temp_extreme['timestamp'] >= previous_stable_timestamp)]
-        eligible['previous_stable_timestamp'] = 00.00000
-        eligible['group_num'] = group_num
-        extreme = extreme.append(eligible)
+        # find stable cycles having at least two consecutive extremes in between
+        base_2 = pd.DataFrame()
+        for index, row in base.iterrows():
+            video_id = row['video_id']
+            timestamp = row['timestamp_x']
+            previous_stable_timestamp = row['previous_stable_timestamp']
 
-    base_5 = stable.append(extreme)
+            eligible = base.loc[(base['video_id'] == video_id) &
+                                (base['timestamp_x'] <= timestamp) &
+                                (base['timestamp_x'] >= previous_stable_timestamp)]
+            eligible = eligible[['state_a2_x', 'frame']]
+            eligible.columns = ['state_b', 'frame_b']
+            eligible['video_id'] = video_id
+            eligible['frame'] = row['frame']
+            eligible['face_id'] = row['face_id_x']
+            eligible['timestamp'] = timestamp
+            eligible['y_30_a'] = row['y_30_x']
+            eligible['state_a'] = row['state_a2_x']
+            eligible['previous_stable_timestamp'] = previous_stable_timestamp
+            base_2 = base_2.append(eligible)
 
-    # select cycles with more than 2 unique extremes
-    temp = base_5[base_5['state_a2'] == 'extreme']
-    temp = temp.groupby(['video_id', 'group_num']).y_30.nunique().reset_index()
-    temp = temp[temp['y_30'] > 2]
-    base_6 = pd.merge(base_5, temp, how='inner', on=['video_id', 'group_num'])
-    base_6 = base_6[['video_id', 'frame', 'face_id', 'timestamp', 'y_30_x', 'y_30_b_min',
-                      'y_30_b_max', 'state_a', 'state_a2', 'previous_stable_timestamp', 'group_num']]
-    base_6.columns = ['video_id', 'frame', 'face_id', 'timestamp', 'y_30', 'y_30_b_min',
-                      'y_30_b_max', 'state_a', 'state_a2', 'previous_stable_timestamp', 'group_num']
-    base_6 = base_6.sort_values(by=['video_id', 'group_num', 'frame'])
+        base_2['extreme'] = base_2.state_b.apply(lambda x: 1 if x == 'extreme' else 0)
+        base_3 = base_2.groupby(['video_id', 'frame', 'face_id', 'timestamp', 'y_30_a', 'state_a',
+                                 'previous_stable_timestamp']).agg({'extreme': sum}).reset_index()
+        with_extremes = base_3[base_3['extreme'] > 2]
 
-    # select cycles with consecutive extremes varying by at least 16 pixels
-    temp = base_6[base_6['state_a2'] == 'extreme']
-    temp['previous_y_30'] = temp.groupby(['video_id', 'group_num'])['y_30'].shift(1)
-    temp['eligible_extreme'] = temp.apply(lambda x: 1 if abs(x['y_30'] - x['previous_y_30']) > 16
-                                          else 0, axis=1)
-    temp = temp.groupby(['video_id', 'group_num']).agg({'eligible_extreme': sum}).reset_index()
-    temp = temp[temp['eligible_extreme'] > 1]
+        # get only cycles with extremes
+        base_4 = pd.DataFrame()
+        for index, row in with_extremes.iterrows():
+            video_id = row['video_id']
+            timestamp = row['timestamp']
+            previous_stable_timestamp = row['previous_stable_timestamp']
+            eligible = helper_1.loc[(helper_1['video_id'] == video_id) &
+                                    (helper_1['timestamp'] <= timestamp) &
+                                    (helper_1['timestamp'] >= previous_stable_timestamp) &
+                                    (helper_1['state_a2'] != 'transient')]
+            base_4 = base_4.append(eligible)
 
-    # combine all final tables
-    base_7 = pd.merge(base_6, temp, how='inner', on=['video_id', 'group_num'])
-    base_7 = base_7[base_7['state_a2'] == 'stable']
-    base_7 = base_7.groupby(['video_id', 'group_num']).agg({'timestamp': [min, max]}).reset_index()
-    base_7.columns = ['video_id', 'group_num', 'start_time', 'end_time']
-    base_7 = base_7[(base_7['end_time'] - base_7['start_time'] >= 1) &
-                    (base_7['end_time'] - base_7['start_time'] <= 1.4)]
-    base_7['speaker'] = base_7.apply(lambda x: cfg.parameters_cfg['speaker_1']
-    if x['video_id'] == video_name_1 else cfg.parameters_cfg['speaker_2'], axis=1)
+        # put unique identifier per cycle
+        stable = pd.merge(base_4[base_4['state_a2'] == 'stable'], stable, how='inner',
+                          on=['video_id', 'frame'])
+        stable = stable[['video_id', 'frame', 'face_id_x', 'timestamp_x', 'y_30_x', 'y_30_b_min_x',
+                         'y_30_b_max_x', 'state_a_x', 'state_a2_x', 'previous_stable_timestamp']]
+        stable.columns = ['video_id', 'frame', 'face_id', 'timestamp', 'y_30', 'y_30_b_min',
+                          'y_30_b_max', 'state_a', 'state_a2', 'previous_stable_timestamp']
+        stable['group_num'] = (stable.index / 2 + 1).astype(int)
+        temp_extreme = base_4[base_4['state_a2'] == 'extreme']
 
-    for_head_nod = pd.merge(talkturn, base_7, how="left", on=["video_id", "speaker"])
-    for_head_nod['time_status'] = np.where((for_head_nod['start time'] <=
-                                            for_head_nod['start_time']) &
-                                           (for_head_nod['end time'] >=
-                                            for_head_nod['end_time']), 1, 0)
-    for_head_nod['headnod'] = np.where((for_head_nod['time_status'] == 1), 1, 0)
-    headnod = for_head_nod[['video_id', 'speaker', 'talkturn no', 'headnod']]
+        extreme = pd.DataFrame()
+        for index, row in stable.iterrows():
+            video_id = row['video_id']
+            timestamp = row['timestamp']
+            previous_stable_timestamp = row['previous_stable_timestamp']
+            group_num = row['group_num']
+            eligible = temp_extreme[(temp_extreme['video_id'] == video_id) &
+                                    (temp_extreme['timestamp'] <= timestamp) &
+                                    (temp_extreme['timestamp'] >= previous_stable_timestamp)]
+            eligible['previous_stable_timestamp'] = 00.00000
+            eligible['group_num'] = group_num
+            extreme = extreme.append(eligible)
+
+        base_5 = stable.append(extreme)
+
+        # select cycles with more than 2 unique extremes
+        temp = base_5[base_5['state_a2'] == 'extreme']
+        temp = temp.groupby(['video_id', 'group_num']).y_30.nunique().reset_index()
+        temp = temp[temp['y_30'] > 2]
+        base_6 = pd.merge(base_5, temp, how='inner', on=['video_id', 'group_num'])
+        base_6 = base_6[['video_id', 'frame', 'face_id', 'timestamp', 'y_30_x', 'y_30_b_min',
+                         'y_30_b_max', 'state_a', 'state_a2', 'previous_stable_timestamp', 'group_num']]
+        base_6.columns = ['video_id', 'frame', 'face_id', 'timestamp', 'y_30', 'y_30_b_min',
+                          'y_30_b_max', 'state_a', 'state_a2', 'previous_stable_timestamp', 'group_num']
+        base_6 = base_6.sort_values(by=['video_id', 'group_num', 'frame'])
+
+        # select cycles with consecutive extremes varying by at least 16 pixels
+        temp = base_6[base_6['state_a2'] == 'extreme']
+        temp['previous_y_30'] = temp.groupby(['video_id', 'group_num'])['y_30'].shift(1)
+        temp['eligible_extreme'] = temp.apply(lambda x: 1 if abs(x['y_30'] - x['previous_y_30']) > 16
+        else 0, axis=1)
+        temp = temp.groupby(['video_id', 'group_num']).agg({'eligible_extreme': sum}).reset_index()
+        temp = temp[temp['eligible_extreme'] > 1]
+
+        # combine all final tables
+        base_7 = pd.merge(base_6, temp, how='inner', on=['video_id', 'group_num'])
+        base_7 = base_7[base_7['state_a2'] == 'stable']
+        base_7 = base_7.groupby(['video_id', 'group_num']).agg({'timestamp': [min, max]}).reset_index()
+        base_7.columns = ['video_id', 'group_num', 'start_time', 'end_time']
+        base_7 = base_7[(base_7['end_time'] - base_7['start_time'] >= 1) &
+                        (base_7['end_time'] - base_7['start_time'] <= 1.4)]
+        base_7['speaker'] = base_7.apply(lambda x: cfg.parameters_cfg['speaker_1']
+        if x['video_id'] == video_name_1 else cfg.parameters_cfg['speaker_2'], axis=1)
+
+        for_head_nod = pd.merge(talkturn, base_7, how="left", on=["video_id", "speaker"])
+        for_head_nod['time_status'] = np.where((for_head_nod['start time'] <=
+                                                for_head_nod['start_time']) &
+                                               (for_head_nod['end time'] >=
+                                                for_head_nod['end_time']), 1, 0)
+        for_head_nod['headnod'] = np.where((for_head_nod['time_status'] == 1), 1, 0)
+        headnod = for_head_nod[['video_id', 'speaker', 'talkturn no', 'headnod']]
+
     headnod.to_csv(os.path.join(parallel_run_settings['csv_path'],
                                 video_name_1 + "_" + video_name_2,
                                 "Stage_2",

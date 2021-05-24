@@ -9,16 +9,22 @@ import pandas as pd
 import Python.Data_Preprocessing.config.config as cfg
 
 
-def compute_posiface(video_name_1, video_name_2, parallel_run_settings):
+def compute_posiface(video_name_1, video_name_2, gstt, parallel_run_settings):
     '''
     Compute for posiface status of the talkturn
     :return: none
     '''
     # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
-    talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
+    if gstt == 0:
+        talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,
                                         "Stage_2",
                                         "weaved talkturns.csv"))
+    else:
+        talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
+                                            video_name_1 + '_' + video_name_2,
+                                            "Stage_2",
+                                            "weaved talkturns_gstt.csv"))
     open_face_results = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                                  video_name_1 + '_' + video_name_2,
                                                  "Stage_1",
