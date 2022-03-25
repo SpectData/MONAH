@@ -4,6 +4,7 @@ This script extracts the vokaturi features of the audio file
 import glob
 import os
 import sys
+import pathlib
 
 import pandas as pd
 import scipy.io.wavfile
@@ -82,6 +83,10 @@ def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
     :return: rows with no emotions
     '''
     # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    # Mark - add a condition that stops the function from running again if file exists
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_1', 'talkturn_vokaturi.csv')))):
+        return print('Stage 1 Vokaturi File Exists')
+
     sys.path.append(parallel_run_settings['Vokaturi_API_Path'])
     import Vokaturi
 

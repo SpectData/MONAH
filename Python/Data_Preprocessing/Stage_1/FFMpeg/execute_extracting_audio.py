@@ -11,6 +11,7 @@ def run_extracting_audio(parallel_run_settings):
     Extract audio only from the video file
     :return: none
     '''
+
     logging.getLogger().setLevel(logging.INFO)
 
     video_list = []

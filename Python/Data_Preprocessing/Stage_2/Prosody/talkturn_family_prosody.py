@@ -2,6 +2,7 @@
 This script creates a summary table of all prosody features of a video
 '''
 import os
+import pathlib
 
 import numpy as np
 import pandas as pd
@@ -52,6 +53,13 @@ def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
     Combine normalize feature values
     :return: none
     '''
+
+    # video_name_1 = video_1
+    # video_name_2 = video_2
+    # Mark - add a condition that stops the function from running again if file exists
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_family_prosody.csv')))):
+        return print('Stage 2 Prosody File Exists')
+
     prosody_start = datetime.now()
     start = datetime.now()
     wpm.extract_speech_rate(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)

@@ -2,9 +2,10 @@
 This script creates a table of head nodding instances from the videos
 '''
 import os
-
+import pathlib
 import numpy as np
 import pandas as pd
+from datetime import datetime
 
 import Python.Data_Preprocessing.config.config as cfg
 import Python.Data_Preprocessing.config.dir_config as prs
@@ -15,6 +16,9 @@ def compute_head_nod(video_name_1, video_name_2, parallel_run_settings):
     Compute for head nod status of the talkturn
     :return: none
     '''
+    # Mark - add a condition that stops the function from running again if file exists
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_headnod.csv')))):
+        return print('Stage 2 Action - Head Nod Exists')
     # Load dataframes
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,
@@ -30,6 +34,8 @@ def compute_head_nod(video_name_1, video_name_2, parallel_run_settings):
                                                            cfg.parameters_cfg['speaker_2'],
                                                            axis=1)
     open_face_results = open_face_results.sort_values(by=['video_id', 'frame'])
+    # Mark - Select the needed fields in openface_raw.csv to reduce memory consumption
+    open_face_results = open_face_results[['video_id', 'speaker', 'frame', ' face_id', ' timestamp', ' y_30']]
 
     # get lead and lag values
     for i in range(0,5):
@@ -119,7 +125,7 @@ def compute_head_nod(video_name_1, video_name_2, parallel_run_settings):
     base_2['extreme'] = base_2.state_b.apply(lambda x: 1 if x == 'extreme' else 0)
     base_3 = base_2.groupby(['video_id', 'frame', 'face_id', 'timestamp', 'y_30_a', 'state_a',
                              'previous_stable_timestamp']).agg({'extreme': sum}).reset_index()
-    with_extremes = base_3[base_3['extreme'] > 2]
+    with_extremes = base_3[base_3['extreme'] > 2] # why not >= 2 since at least 2?
 
     # get only cycles with extremes
     base_4 = pd.DataFrame()
@@ -172,7 +178,7 @@ def compute_head_nod(video_name_1, video_name_2, parallel_run_settings):
     # select cycles with consecutive extremes varying by at least 16 pixels
     temp = base_6[base_6['state_a2'] == 'extreme']
     temp['previous_y_30'] = temp.groupby(['video_id', 'group_num'])['y_30'].shift(1)
-    temp['eligible_extreme'] = temp.apply(lambda x: 1 if abs(x['y_30'] - x['previous_y_30']) > 16
+    temp['eligible_extreme'] = temp.apply(lambda x: 1 if abs(x['y_30'] - x['previous_y_30']) > 16 # why not >= 16???
                                           else 0, axis=1)
     temp = temp.groupby(['video_id', 'group_num']).agg({'eligible_extreme': sum}).reset_index()
     temp = temp[temp['eligible_extreme'] > 1]
@@ -184,9 +190,10 @@ def compute_head_nod(video_name_1, video_name_2, parallel_run_settings):
     base_7.columns = ['video_id', 'group_num', 'start_time', 'end_time']
     base_7 = base_7[(base_7['end_time'] - base_7['start_time'] >= 1) &
                     (base_7['end_time'] - base_7['start_time'] <= 1.4)]
-    base_7['speaker'] = base_7.apply(lambda x: cfg.parameters_cfg['speaker_1']
-    if x['video_id'] == video_name_1 else cfg.parameters_cfg['speaker_2'], axis=1)
-
+    # Mark - changed the formula for getting speaker
+    base_7['speaker'] = np.where(base_7.video_id == video_name_1, cfg.parameters_cfg['speaker_1'], cfg.parameters_cfg['speaker_2'])
+    #base_7['speaker'] = base_7.apply(lambda x: cfg.parameters_cfg['speaker_1']
+    #if x['video_id'] == video_name_1 else cfg.parameters_cfg['speaker_2'], axis=1)
     for_head_nod = pd.merge(talkturn, base_7, how="left", on=["video_id", "speaker"])
     for_head_nod['time_status'] = np.where((for_head_nod['start time'] <=
                                             for_head_nod['start_time']) &
@@ -202,6 +209,6 @@ def compute_head_nod(video_name_1, video_name_2, parallel_run_settings):
 
 if __name__ == '__main__':
     parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
-    compute_head_nod(video_name_1='Ses01F_F',
-                     video_name_2='Ses01F_M',
+    compute_head_nod(video_name_1='Ses04F_impro02_F',
+                     video_name_2='Ses04F_impro02_M',
                      parallel_run_settings=parallel_run_settings)

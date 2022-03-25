@@ -35,8 +35,8 @@ def wpm_look_up(num):
     Look up table for wpm
     :return: look up data frame
     '''
-    d = {'lb': [-99, -2, 1, 2],
-         'ub': [-2, -1, 2, 99],
+    d = {'lb': [-999, -2, 1, 2],
+         'ub': [-2, -1, 2, 999],
           'text': ['very slowly ', 'slowly ',
                    'quickly ', 'very quickly ']}
     df = pd.DataFrame(data=d)
@@ -192,7 +192,9 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
         family = ''
 
     dfr['family'] = family
-    dfr['text'] = dfr.text.apply(lambda x: x.lower())
+    # Mark - changed the formula for lower
+    dfr['text'] = dfr.text.str.lower()
+    # dfr['text'] = dfr.text.apply(lambda x: x.lower())
     dfr.loc[dfr['happiness_z'] > 2, 'tone'] = 1
     dfr.loc[dfr['anger_z'] > 2, 'tone'] = 2
     dfr.loc[dfr['sadness_z'] > 2, 'tone'] = 3
@@ -270,7 +272,9 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
                               else x['blob_11'], axis=1)
 
     # verbatim
-    dfr['blob_12'] = dfr.apply(lambda x: 'said ' + str.lower(x['text']) + '.', axis=1)
+    # Mark - use diff formula for blob_12
+    dfr['blob_12'] = 'said ' + str(dfr.text) + '.'
+    # dfr['blob_12'] = dfr.apply(lambda x: 'said ' + str.lower(x['text']) + '.', axis=1)
     dfr['text_blob'] = ''
 
     for blob in ['blob_11', 'blob_1', 'blob_2', 'blob_3', 'blob_4', 'blob_5',
@@ -283,6 +287,7 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
     dfr.sort_values(by=['audio_id', 'talkturn no'], inplace=True)
 
     # Quality check - ensure same number of rows
+    # print(len(talkturn), len(dfr))
     assert len(talkturn) == len(dfr)
 
     # Export

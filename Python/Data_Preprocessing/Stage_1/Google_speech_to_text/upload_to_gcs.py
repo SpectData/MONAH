@@ -16,7 +16,9 @@ def upload_blob(bucket_name, destination_blob_name, parallel_run_settings):
     :return: none
     '''
     # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./data/secrets/69b431b78607.json"
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/marriane-f2sh391ja/Documents/GitHub/MONAH/data/secrets/69b431b78607.json"
     storage_client = storage.Client()
     bucket = storage_client.get_bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)

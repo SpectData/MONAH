@@ -2,13 +2,14 @@
 This script runs open face to all the videos
 '''
 import os
-
+import pathlib
 import pandas as pd
 
 import Python.Data_Preprocessing.Stage_1.Audio_files_manipulation.copy_mp4_files as cmf
 import Python.Data_Preprocessing.Stage_1.OpenFace.check_video_length as cvl
 import Python.Data_Preprocessing.Stage_1.OpenFace.download_avi as da
 import Python.Data_Preprocessing.Stage_1.OpenFace.openface_cli as ofc
+import data.secrets.parallel_run_settings_secret as prs
 
 
 def run_open_face(video_name_1, video_name_2, parallel_run_settings):
@@ -17,6 +18,9 @@ def run_open_face(video_name_1, video_name_2, parallel_run_settings):
     :return: none
     '''
     # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    # Mark - add a condition that stops the function from running again if file exists
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_1', 'openface_raw.csv')))):
+        return print('Stage 1 OpenFace Raw File Exists')
 
     # download videos
     video_list = da.download_video(video_name_1, video_name_2, parallel_run_settings)
@@ -52,4 +56,5 @@ def run_open_face(video_name_1, video_name_2, parallel_run_settings):
                              index=False)
 
 if __name__ == '__main__':
-    run_open_face(video_name_1="Ses02F_F", video_name_2="Ses02F_M")
+    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    run_open_face(video_name_1="Ses01F_F", video_name_2="Ses01F_M", parallel_run_settings=parallel_run_settings)

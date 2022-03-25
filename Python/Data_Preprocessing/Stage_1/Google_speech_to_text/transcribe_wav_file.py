@@ -20,7 +20,10 @@ def transcribe_gcs(bucket_name, audio_id, parallel_run_settings):
     :return: word and utterance transcripts
     '''
 
+
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./data/secrets/69b431b78607.json"
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/marriane-f2sh391ja/Documents/GitHub/MONAH/data/secrets/69b431b78607.json"
+
     # info = mediainfo(os.path.join(parallel_run_settings['wav_path'], audio_id))
     # sample_rate = info['sample_rate']
     sample_rate, data = read_wav(os.path.join(parallel_run_settings['wav_path'], audio_id))

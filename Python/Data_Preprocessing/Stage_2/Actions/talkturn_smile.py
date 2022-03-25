@@ -2,6 +2,7 @@
 This script creates a table of smile detected from the videos
 '''
 import os
+import pathlib
 
 import numpy as np
 import pandas as pd
@@ -15,6 +16,11 @@ def compute_smile(video_name_1, video_name_2, parallel_run_settings):
     :return: none
     '''
     # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    # Mark - add a condition that stops the function from running again if file exists
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_smile.csv')))):
+        return print('Stage 2 Action - Smile Exists')
+
+    # Load files
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,
                                         "Stage_2",
@@ -47,6 +53,8 @@ def compute_smile(video_name_1, video_name_2, parallel_run_settings):
     smiling_df = pd.merge(smiling_df, talkturn, how="right", on=['video_id', 'speaker'])
     smiling_df['smile'] = np.where((smiling_df['start time'] <= smiling_df['start_date']) &
                                    (smiling_df['end time'] >= smiling_df['end_date']), 1, 0)
+    # Mark - aggregate the smile at talkturn level
+    smiling_df = smiling_df.groupby(['video_id', 'speaker', 'talkturn no'])['smile'].max().reset_index()
     smiling_df = smiling_df[['video_id', 'speaker', 'talkturn no', 'smile']]
     smiling_df.to_csv(os.path.join(parallel_run_settings['csv_path'],
                                    video_name_1 + "_" + video_name_2,

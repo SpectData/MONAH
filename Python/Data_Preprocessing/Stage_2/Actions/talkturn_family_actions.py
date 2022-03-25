@@ -2,6 +2,7 @@
 This script creates a summary table of all action features of a video
 '''
 import os
+import pathlib
 
 import pandas as pd
 from datetime import datetime
@@ -19,6 +20,10 @@ def combine_actions_features(video_name_1, video_name_2, parallel_run_settings):
     combine action features in one summary table
     :return: none
     '''
+    # Mark - add a condition that stops the function from running again if file exists
+    # if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_family_actions.csv')))):
+    #    return print('Stage 2 Actions File Exists')
+
     action_start = datetime.now()
     start = datetime.now()
     sml.compute_smile(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)

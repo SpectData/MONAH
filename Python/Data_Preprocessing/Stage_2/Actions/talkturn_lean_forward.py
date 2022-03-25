@@ -2,7 +2,7 @@
 This script creates a table of head nodding instances from the videos
 '''
 import os
-
+import pathlib
 import numpy as np
 import pandas as pd
 
@@ -15,6 +15,9 @@ def compute_lean_forward(video_name_1, video_name_2, parallel_run_settings):
     Compute for head nod status of the talkturn
     :return: none
     '''
+    # Mark - add a condition that stops the function from running again if file exists
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_leanforward.csv')))):
+        return print('Stage 2 Action - Lean Forward Exists')
     # Load dataframes
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,

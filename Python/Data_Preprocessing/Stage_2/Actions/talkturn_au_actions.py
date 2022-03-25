@@ -2,7 +2,7 @@
 This script creates a table of AU actions from the videos
 '''
 import os
-
+import pathlib
 import numpy as np
 import pandas as pd
 
@@ -15,6 +15,10 @@ def compute_au_actions(video_name_1, video_name_2, parallel_run_settings):
     :return: none
     '''
     # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
+    # Mark - add a condition that stops the function from running again if file exists
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_au_actions.csv')))):
+        return print('Stage 2 Action - AU Exists')
+
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,
                                         "Stage_2",
@@ -29,6 +33,8 @@ def compute_au_actions(video_name_1, video_name_2, parallel_run_settings):
                                                            cfg.parameters_cfg['speaker_2'],
                                                            axis=1)
     open_face_results = open_face_results.sort_values(by=['video_id', 'speaker', 'frame'])
+    # Mark - Select the needed fields in openface_raw.csv to reduce memory consumption
+    open_face_results = open_face_results[['video_id', 'speaker', 'frame', ' timestamp', ' AU05_c', ' AU17_c', ' AU20_c', ' AU25_c']]
     for_aus = pd.merge(talkturn, open_face_results, how="inner", on=["video_id", "speaker"])
     for_aus['time_status'] = np.where((for_aus['start time'] <=
                                        for_aus[' timestamp']) &
