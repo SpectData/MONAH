@@ -19,11 +19,12 @@ def run_weaving_talkturn(video_name_1, video_name_2, parallel_run_settings):
     weave resulted scripts from google speech to text
     :return: none
     '''
-    gst.run_google_speech_to_text(video_name_1, video_name_2, parallel_run_settings)
     # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     # Mark - add a condition that stops the function from running again if file exists
     if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', "weaved talkturns.csv")))):
         return print('Stage 1 Weaved Talkturns File Exists')
+
+    gst.run_google_speech_to_text(video_name_1, video_name_2, parallel_run_settings)
 
     # Load dataframes
     df_word = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],

@@ -178,7 +178,7 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
     dfs = [talkturn, prosody, actions]
     dfr = dfs[0]
     for df_ in dfs[1:]:
-        dfr = pd.merge(dfr, df_, how='outer', on=['audio_id', 'speaker', 'talkturn no'])
+        dfr = pd.merge(dfr, df_, how='left', on=['audio_id', 'speaker', 'talkturn no'])
 
     if (delay + tone + speech_rate == 0) and (au_action + smile + posiface + headnod + leanforward == 0):
         family = 'v'
@@ -273,8 +273,7 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
 
     # verbatim
     # Mark - use diff formula for blob_12
-    dfr['blob_12'] = 'said ' + str(dfr.text) + '.'
-    # dfr['blob_12'] = dfr.apply(lambda x: 'said ' + str.lower(x['text']) + '.', axis=1)
+    dfr['blob_12'] = dfr.text.apply(lambda x: 'said ' + str(x) + '.')
     dfr['text_blob'] = ''
 
     for blob in ['blob_11', 'blob_1', 'blob_2', 'blob_3', 'blob_4', 'blob_5',
