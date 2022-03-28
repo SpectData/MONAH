@@ -6,6 +6,7 @@ import pathlib
 
 import numpy as np
 import pandas as pd
+from datetime import datetime
 
 import Python.Data_Preprocessing.config.config as cfg
 
@@ -20,6 +21,7 @@ def compute_smile(video_name_1, video_name_2, parallel_run_settings):
     if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_smile.csv')))):
         return print('Stage 2 Action - Smile Exists')
 
+    start = datetime.now()
     # Load files
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,
@@ -61,6 +63,7 @@ def compute_smile(video_name_1, video_name_2, parallel_run_settings):
                                    "Stage_2",
                                    'talkturn_smile.csv'),
                       index=False)
+    print('Stage 2 Action Smile Time: ', datetime.now() - start)
 
 if __name__ == '__main__':
     compute_smile(video_name_1='Ses01F_F', video_name_2='Ses01F_M')

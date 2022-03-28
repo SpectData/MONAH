@@ -57,17 +57,19 @@ def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
     # video_name_1 = video_1
     # video_name_2 = video_2
     # Mark - add a condition that stops the function from running again if file exists
-    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_family_prosody.csv')))):
-        return print('Stage 2 Prosody File Exists')
+    #if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_family_prosody.csv')))):
+    #    return print('Stage 2 Prosody File Exists')
 
     prosody_start = datetime.now()
-    start = datetime.now()
+    # Mark - placed the time inside the function
+    #start = datetime.now()
     wpm.extract_speech_rate(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
-    print('Stage 2 Prosody SpeechRate Time: ', datetime.now() - start)
+    #print('Stage 2 Prosody SpeechRate Time: ', datetime.now() - start)
 
-    start = datetime.now()
+    # Mark - placed the time inside the function
+    #start = datetime.now()
     dly.extract_delay(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
-    print('Stage 2 Prosody Delay Time: ', datetime.now() - start)
+    #print('Stage 2 Prosody Delay Time: ', datetime.now() - start)
 
     # Load dataframes
     df_wpm = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],

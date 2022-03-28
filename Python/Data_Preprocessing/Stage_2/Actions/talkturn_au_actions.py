@@ -5,6 +5,7 @@ import os
 import pathlib
 import numpy as np
 import pandas as pd
+from datetime import datetime
 
 import Python.Data_Preprocessing.config.config as cfg
 
@@ -19,6 +20,7 @@ def compute_au_actions(video_name_1, video_name_2, parallel_run_settings):
     if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_au_actions.csv')))):
         return print('Stage 2 Action - AU Exists')
 
+    start = datetime.now()
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,
                                         "Stage_2",
@@ -61,6 +63,7 @@ def compute_au_actions(video_name_1, video_name_2, parallel_run_settings):
                                    'Stage_2',
                                    "talkturn_au_actions.csv"),
                       index=False)
+    print('Stage 2 Action AUs Time: ', datetime.now() - start)
 
 if __name__ == '__main__':
     compute_au_actions(video_name_1='zoom_F', video_name_2='zoom_M')

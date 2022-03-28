@@ -5,7 +5,7 @@ import os
 import pathlib
 import numpy as np
 import pandas as pd
-
+from datetime import datetime
 import Python.Data_Preprocessing.config.config as cfg
 import Python.Data_Preprocessing.config.dir_config as prs
 
@@ -18,6 +18,8 @@ def compute_lean_forward(video_name_1, video_name_2, parallel_run_settings):
     # Mark - add a condition that stops the function from running again if file exists
     if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_leanforward.csv')))):
         return print('Stage 2 Action - Lean Forward Exists')
+
+    start = datetime.now()
     # Load dataframes
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                         video_name_1 + '_' + video_name_2,
@@ -116,6 +118,7 @@ def compute_lean_forward(video_name_1, video_name_2, parallel_run_settings):
                                 "Stage_2",
                                 "talkturn_leanforward.csv"),
                    index=False)
+    print('Stage 2 Action ForwardLean Time: ', datetime.now() - start)
 
 if __name__ == '__main__':
     parallel_run_settings = prs.get_parallel_run_settings("marriane_win")

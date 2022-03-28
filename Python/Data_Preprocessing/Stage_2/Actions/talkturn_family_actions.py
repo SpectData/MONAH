@@ -25,25 +25,26 @@ def combine_actions_features(video_name_1, video_name_2, parallel_run_settings):
     #    return print('Stage 2 Actions File Exists')
 
     action_start = datetime.now()
-    start = datetime.now()
+    # Mark - placed the time inside each action function
+    #start = datetime.now()
     sml.compute_smile(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
-    print('Stage 2 Action Smile Time: ', datetime.now() - start)
+    #print('Stage 2 Action Smile Time: ', datetime.now() - start)
 
-    start = datetime.now()
+    #start = datetime.now()
     psf.compute_posiface(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
-    print('Stage 2 Action Posiface Time: ', datetime.now() - start)
+    #print('Stage 2 Action Posiface Time: ', datetime.now() - start)
 
-    start = datetime.now()
+    #start = datetime.now()
     aua.compute_au_actions(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
-    print('Stage 2 Action AUs Time: ', datetime.now() - start)
+    #print('Stage 2 Action AUs Time: ', datetime.now() - start)
 
-    start = datetime.now()
+    #start = datetime.now()
     hnd.compute_head_nod(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
-    print('Stage 2 Action HeadNod Time: ', datetime.now() - start)
+    #print('Stage 2 Action HeadNod Time: ', datetime.now() - start)
 
-    start = datetime.now()
+    #start = datetime.now()
     lfd.compute_lean_forward(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
-    print('Stage 2 Action ForwardLean Time: ', datetime.now() - start)
+    #print('Stage 2 Action ForwardLean Time: ', datetime.now() - start)
 
     # load dataframes
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
