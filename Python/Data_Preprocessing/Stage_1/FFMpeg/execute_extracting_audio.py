@@ -3,14 +3,22 @@ This script extracts the audio recording from the video file and stores it in a 
 '''
 import logging
 import os
+import pathlib
 import shutil
 
 
-def run_extracting_audio(parallel_run_settings):
+def run_extracting_audio(video_name_1, video_name_2, parallel_run_settings):
     '''
     Extract audio only from the video file
     :return: none
     '''
+    file_count = 0
+    for i in [video_name_1, video_name_2]:
+        if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['wav_path'], i + '.wav')))):
+            print('Stage 1 Audio File: ' + i + ' Exists')
+            file_count += 1
+    if file_count == 2:
+        return print('Stage 1 Both Audio Files Exist')
 
     logging.getLogger().setLevel(logging.INFO)
 
