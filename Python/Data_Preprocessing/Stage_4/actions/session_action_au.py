@@ -124,15 +124,15 @@ def get_blob(variable, fxn, speaker, data):
         if row_df['z_bucket'] == None:
             pass
         else:
-            df_copy.blob.iloc[i] = text+' ' +variable_text+' by '+speaker+' '+\
-                                   row_df['z_bucket'] + ' '
+            df_copy['blob'] = text + ' ' + variable_text +' by '+ speaker + ' ' + row_df['z_bucket'] + ' '
+            #df_copy.blob.iloc[i] = text + ' ' + variable_text +' by '+ speaker + ' ' + row_df['z_bucket'] + ' '
             print(df_copy)
 
     return df_copy
 
-def get_all_blob(video_name_1, video_name_2):
+def get_all_blob(video_name_1, video_name_2, parallel_run_settings):
     # Importing connection object
-    data = run_dataframe(video_name_1, video_name_2)
+    data = run_dataframe(video_name_1, video_name_2, parallel_run_settings)
 
     action_blob = pd.DataFrame()
     speakers = [cfg.parameters_cfg['speaker_1'], cfg.parameters_cfg['speaker_2']]

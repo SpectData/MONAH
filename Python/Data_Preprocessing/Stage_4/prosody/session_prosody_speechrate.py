@@ -3,12 +3,12 @@ This script prepares the session-level transcript for au actions
 '''
 
 import os
-
 import pandas as pd
 
 pd.__version__
 
 import Python.Data_Preprocessing.config.config as cfg
+
 
 from tqdm import tqdm
 
@@ -98,15 +98,17 @@ def get_blob(variable, fxn, speaker, data):
         if row_df['z_bucket'] == None:
             pass
         else:
-            df_copy.blob.iloc[i] = text+' ' +variable_text+' by '+speaker+' '+\
-                                   row_df['z_bucket'] + ' '
+            # Mark - change the formula that removes warning
+            df_copy['blob'] = text + ' ' + variable_text + ' by ' + speaker + ' ' + row_df['z_bucket'] + ' '
+            #df_copy.blob.iloc[i] = text+' ' +variable_text+' by '+speaker+' '+\
+            #                       row_df['z_bucket'] + ' '
             print(df_copy)
 
     return df_copy
 
-def get_all_blob(video_name_1, video_name_2):
+def get_all_blob(video_name_1, video_name_2, parallel_run_settings):
     # Importing connection object
-    data = run_dataframe(video_name_1, video_name_2)
+    data = run_dataframe(video_name_1, video_name_2, parallel_run_settings)
 
     speechrate_blob = pd.DataFrame()
     speakers = [cfg.parameters_cfg['speaker_1'], cfg.parameters_cfg['speaker_2']]
@@ -133,6 +135,7 @@ def get_all_blob(video_name_1, video_name_2):
                 speechrate_blob.blob.iloc[i] =  row_df['blob'][:-1] + '. '
 
         speechrate_blob = speechrate_blob.sort_values(by=['Video_ID'])
+    print('Stage 4 Prosody Speech Rate Done')
 
     return speechrate_blob
 

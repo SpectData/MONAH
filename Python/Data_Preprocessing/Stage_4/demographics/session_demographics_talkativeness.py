@@ -96,8 +96,9 @@ def get_blob(variable, fxn, speaker, data):
         if row_df['z_bucket'] == None:
             pass
         else:
-            df_copy.blob.iloc[i] = text+' ' +variable_text+' by '+speaker+' '+\
-                                   row_df['z_bucket'] + ' '
+            # Mark - change the formula that removes warning
+            df_copy['blob'] = text + ' ' + variable_text + ' by ' + speaker + ' ' + row_df['z_bucket'] + ' '
+            # df_copy['blob'] = df_copy.z_bucket.apply(lambda x: text + ' ' + variable_text + ' by ' + speaker + ' ' + x + ' ')
             print(df_copy)
 
     return df_copy
