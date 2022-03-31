@@ -8,7 +8,8 @@ import pandas as pd
 pd.__version__
 
 import os
-
+import pathlib
+from datetime import datetime
 import Python.Data_Preprocessing.Stage_4.prosody.session_prosody_speechrate as sps
 import Python.Data_Preprocessing.Stage_4.prosody.session_prosody_delay as spd
 import Python.Data_Preprocessing.Stage_4.prosody.session_prosody_tone as spt
@@ -22,12 +23,13 @@ def get_prosody_blob(video_name_1, video_name_2, delay, wpm, tone, parallel_run_
     :return:
     '''
     # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
-    speechrate_blob = sps.get_all_blob(video_name_1,
-                                       video_name_2)
-    delay_blob = spd.get_all_blob(video_name_1,
-                                  video_name_2)
-    tone_blob = spt.get_all_blob(video_name_1,
-                                 video_name_2)
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_4', 'Prosody', 'narrative_coarse.csv')))):
+        return print('Stage 4 Prosody File Exists')
+
+    start = datetime.now()
+    speechrate_blob = sps.get_all_blob(video_name_1, video_name_2, parallel_run_settings)
+    delay_blob = spd.get_all_blob(video_name_1, video_name_2, parallel_run_settings)
+    tone_blob = spt.get_all_blob(video_name_1, video_name_2, parallel_run_settings)
 
     speechrate_blob = speechrate_blob.sort_values(by=['Video_ID'])
     speechrate_blob['blob'] = speechrate_blob.blob.apply(lambda x: x if wpm == 1 else '')
@@ -75,6 +77,7 @@ def get_prosody_blob(video_name_1, video_name_2, delay, wpm, tone, parallel_run_
                                'Stage_4',
                                'Prosody',
                                'narrative_coarse.csv'), index=False)
+    print('Stage 4 Prosody Time: ', datetime.now() - start)
 
 if __name__ == '__main__':
     get_prosody_blob(video_name_1='Ses01F_F',

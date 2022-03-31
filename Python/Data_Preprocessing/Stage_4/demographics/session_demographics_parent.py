@@ -5,7 +5,8 @@ This script combines all the action session level transcript
 # Load libraries
 
 import os
-
+import pathlib
+from datetime import datetime
 import Python.Data_Preprocessing.Stage_4.demographics.session_demographics_talkativeness as sdt
 
 
@@ -17,6 +18,10 @@ def get_demographics_blob(video_name_1, video_name_2, word_count, parallel_run_s
     :return:
     '''
     # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_4', 'Demographics', 'narrative_coarse.csv')))):
+        return print('Stage 4 Demographics File Exists')
+
+    start = datetime.now()
     word_count_blob = sdt.get_all_blob(video_name_1,
                                        video_name_2,
                                        parallel_run_settings)
@@ -39,6 +44,7 @@ def get_demographics_blob(video_name_1, video_name_2, word_count, parallel_run_s
                                'Stage_4',
                                'Demographics',
                                'narrative_coarse.csv'), index=False)
+    print('Stage 4 Demographics Time: ', datetime.now() - start)
 
 if __name__ == '__main__':
     get_demographics_blob(video_name_1='Ses01F_F',
