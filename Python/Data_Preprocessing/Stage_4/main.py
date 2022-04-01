@@ -31,9 +31,9 @@ def weave_session_level_transcript(video_name_1,
     '''
     start = datetime.now()
     cdi.run_creating_directories(video_name_1, video_name_2, parallel_run_settings)
-    sdp.get_demographics_blob(video_name_1, video_name_2, word_count=d_word_count, parallel_run_settings=parallel_run_settings)
-    spp.get_prosody_blob(video_name_1, video_name_2, delay=p_delay, wpm=p_wpm, tone=p_tone, parallel_run_settings=parallel_run_settings)
-    sap.get_actions_blob(video_name_1, video_name_2, au_action=a_au, posiface=a_posiface, smile=a_smile, parallel_run_settings=parallel_run_settings)
+    sdp.get_demographics_blob(video_name_1, video_name_2, parallel_run_settings, word_count=d_word_count)
+    spp.get_prosody_blob(video_name_1, video_name_2, parallel_run_settings, delay=p_delay, wpm=p_wpm, tone=p_tone)
+    sap.get_actions_blob(video_name_1, video_name_2, parallel_run_settings, au_action=a_au, posiface=a_posiface, smile=a_smile)
 
     demographics_blob = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
                                                  video_name_1 + '_' + video_name_2,

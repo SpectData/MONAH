@@ -15,11 +15,15 @@ import Python.Data_Preprocessing.Stage_4.actions.session_action_smile as sas
 import Python.Data_Preprocessing.Stage_4.actions.session_action_au as saa
 
 
-def get_actions_blob(video_name_1, video_name_2, au_action, posiface, smile, parallel_run_settings):
+def get_actions_blob(video_name_1, video_name_2, parallel_run_settings, au_action, posiface, smile):
     '''
     Combining all action transcripts in one blob
     :param video_name_1:
     :param video_name_2:
+    :param parallel_run_settings:
+    :param au_action:
+    :param posiface:
+    :param smile:
     :return:
     '''
     # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")

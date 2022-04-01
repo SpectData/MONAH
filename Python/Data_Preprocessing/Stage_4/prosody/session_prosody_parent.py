@@ -15,11 +15,15 @@ import Python.Data_Preprocessing.Stage_4.prosody.session_prosody_delay as spd
 import Python.Data_Preprocessing.Stage_4.prosody.session_prosody_tone as spt
 
 
-def get_prosody_blob(video_name_1, video_name_2, delay, wpm, tone, parallel_run_settings):
+def get_prosody_blob(video_name_1, video_name_2, parallel_run_settings, delay, wpm, tone):
     '''
     Combining all action transcripts in one blob
     :param video_name_1:
     :param video_name_2:
+    :param parallel_run_settings:
+    :param delay:
+    :param wpm:
+    :param tone:
     :return:
     '''
     # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")

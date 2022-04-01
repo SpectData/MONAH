@@ -10,11 +10,13 @@ from datetime import datetime
 import Python.Data_Preprocessing.Stage_4.demographics.session_demographics_talkativeness as sdt
 
 
-def get_demographics_blob(video_name_1, video_name_2, word_count, parallel_run_settings):
+def get_demographics_blob(video_name_1, video_name_2, parallel_run_settings, word_count):
     '''
     Combining all action transcripts in one blob
     :param video_name_1:
     :param video_name_2:
+    :param word_count:
+    :param parallel_run_settings
     :return:
     '''
     # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
