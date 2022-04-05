@@ -90,11 +90,15 @@ def compute_lean_forward(video_name_1, video_name_2, parallel_run_settings):
     stable['stable_num'] = stable.groupby('video_id')['frame'].rank(method="first", ascending=True)
 
     # select cycles with stable points varying by at least 8cm
-    stable['eligible'] = stable.apply(lambda x: 1 if x['previous_stable_pose_Tz'] - x['pose_Tz'] >= 80
-    else 0, axis=1)
-    stable['magnitude'] = stable.apply(lambda x: x['previous_stable_pose_Tz'] - x['pose_Tz'], axis=1)
-    stable['speaker'] = stable.apply(lambda x: cfg.parameters_cfg['speaker_1']
-    if x['video_id'] == video_name_1 else cfg.parameters_cfg['speaker_2'], axis=1)
+    #stable['eligible'] = stable.apply(lambda x: 1 if x['previous_stable_pose_Tz'] - x['pose_Tz'] >= 80 else 0, axis=1)
+    stable['eligible'] = np.where(stable.previous_stable_pose_Tz - stable.pose_Tz >= 80, 1, 0)
+    #stable['magnitude'] = stable.apply(lambda x: x['previous_stable_pose_Tz'] - x['pose_Tz'], axis=1)
+    stable['magnitude'] = stable.previous_stable_pose_Tz - stable.pose_Tz
+    #stable['speaker'] = stable.apply(lambda x: cfg.parameters_cfg['speaker_1']
+    #if x['video_id'] == video_name_1 else cfg.parameters_cfg['speaker_2'], axis=1)
+    stable['speaker'] = np.where(stable.video_id == video_name_1,
+                                 cfg.parameters_cfg['speaker_1'],
+                                 cfg.parameters_cfg['speaker_2'])
 
     base = stable[['video_id', 'speaker', 'previous_stable_timestamp', 'timestamp', 'eligible', 'magnitude']]
     base.columns = ['video_id', 'speaker', 'start_time', 'end_time', 'eligible', 'magnitude']
