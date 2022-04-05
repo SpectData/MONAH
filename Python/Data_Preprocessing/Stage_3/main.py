@@ -87,7 +87,7 @@ def weave_vpa(video_1, video_2, delay, tone, speech_rate, au_action, posiface, s
     print("Done data processing - Stage 3")
 
     print('Stage 3 Time: ', datetime.now() - start)
-    print('All Stages Run Time: ', datetime.now() - overall_start)
+    print('Stages 1 to 3 Run Time: ', datetime.now() - overall_start)
 
 
 if __name__ == '__main__':
