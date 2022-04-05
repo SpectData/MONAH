@@ -115,7 +115,7 @@ def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
                                                                if x['video_id'] == video_name_1
                                                                else cfg.parameters_cfg['speaker_2'],
                                                                axis=1)
-                    df_emotions['talkturn no'] = talkturn_id_complete.split("_")[2]
+                    df_emotions['talkturn no'] = talkturn_id_complete.split("_")[3] #change from 2 to 3
                     df_emotions['audio_id'] = talkturn_id_complete.split("_")[0]
                     df_emotions = df_emotions[
                         ['video_id', 'audio_id', 'speaker', 'talkturn no', 'neutrality', 'happiness',
