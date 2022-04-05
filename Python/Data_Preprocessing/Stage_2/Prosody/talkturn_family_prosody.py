@@ -61,15 +61,8 @@ def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
     #    return print('Stage 2 Prosody File Exists')
 
     prosody_start = datetime.now()
-    # Mark - placed the time inside the function
-    #start = datetime.now()
     wpm.extract_speech_rate(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
-    #print('Stage 2 Prosody SpeechRate Time: ', datetime.now() - start)
-
-    # Mark - placed the time inside the function
-    #start = datetime.now()
     dly.extract_delay(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
-    #print('Stage 2 Prosody Delay Time: ', datetime.now() - start)
 
     # Load dataframes
     df_wpm = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
