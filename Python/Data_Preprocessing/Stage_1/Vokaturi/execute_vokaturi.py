@@ -108,8 +108,9 @@ def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
                 result = analyze_wav(full_path, parallel_run_settings=parallel_run_settings)
                 if result:
                     df_emotions = pd.DataFrame(result, index=[0])
-                    df_emotions['video_id'] = talkturn_id_complete[0:
-                                                                   (len(talkturn_id_complete.split("_")[2]) + 1)*-1]
+                    #df_emotions['video_id'] = talkturn_id_complete[0:
+                    #                                               (len(talkturn_id_complete.split("_")[2]) + 1)*-1]
+                    df_emotions['video_id'] = '_'.join(talkturn_id_complete.split("_")[0:3])
                     df_emotions['speaker'] = df_emotions.apply(lambda x:
                                                                cfg.parameters_cfg['speaker_1']
                                                                if x['video_id'] == video_name_1
