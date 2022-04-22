@@ -152,7 +152,7 @@ def leanforward_look_up(num):
 
     return df.loc[(df['lb'] <= num) & (num < df['ub']), 'text'].values[0]
 
-def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
+def weave_narrative(video_1, video_2, delay, tone, speech_rate,
                     au_action, posiface, smile, headnod, leanforward, parallel_run_settings):
     '''
     Weaves narratives and exports csv
@@ -161,18 +161,18 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
     # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
 
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                        video_name_1 + '_' + video_name_2,
+                                        video_1 + '_' + video_2,
                                         'Stage_2',
                                         'weaved talkturns.csv'))
     talkturn['text'] = talkturn['text'].str.replace(r'[^\w\s]+', '')
     talkturn['text'] = talkturn.text.apply(lambda x: x[:-1] if x[-1:] == ' ' else x)
     talkturn['text'] = talkturn.text.apply(lambda x: x[:-1] if x[-1:] == ' ' else x)
     prosody = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                       video_name_1 + '_' + video_name_2,
+                                       video_1 + '_' + video_2,
                                        'Stage_2',
                                        'talkturn_family_prosody.csv'))
     actions = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                       video_name_1 + '_' + video_name_2,
+                                       video_1 + '_' + video_2,
                                        'Stage_2',
                                        'talkturn_family_actions.csv'))
     dfs = [talkturn, prosody, actions]
@@ -291,7 +291,7 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
 
     # Export
     dfr.to_csv(os.path.join(parallel_run_settings['csv_path'],
-                            video_name_1 + '_' + video_name_2,
+                            video_1 + '_' + video_2,
                             "Stage_3",
                             "narrative_fine.csv"),
                index=False)
@@ -304,8 +304,8 @@ def weave_narrative(video_name_1, video_name_2, delay, tone, speech_rate,
 
 if __name__ == '__main__':
     parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
-    weave_narrative(video_name_1='Ses01F_F',
-                    video_name_2='Ses01F_M',
+    weave_narrative(video_1='Ses01F_F',
+                    video_2='Ses01F_M',
                     delay=1,
                     tone=1,
                     speech_rate=1,

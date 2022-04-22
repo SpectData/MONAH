@@ -42,8 +42,8 @@ def weave_vpa(video_1, video_2, delay, tone, speech_rate, au_action, posiface, s
               headnod, leanforward, parallel_run_settings):
     '''
     Weave text blob for vpa family
-    :param video_name_1: name of first video file
-    :param video_name_2: name of second video file
+    :param video_1: name of first video file
+    :param video_2: name of second video file
     :return: none
     '''
     overall_start= datetime.now()
@@ -95,9 +95,9 @@ if __name__ == '__main__':
 
     weave_vpa(video_1='Ses04F_impro02_F',
               video_2='Ses04F_impro02_M',
-              delay=0,
+              delay=1,
               tone=1,
-              speech_rate=0,
+              speech_rate=1,
               au_action=1,
               posiface=1,
               smile=1,

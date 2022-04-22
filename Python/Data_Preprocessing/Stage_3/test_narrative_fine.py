@@ -5,8 +5,8 @@ from Python.Data_Preprocessing.config import dir_config as dcf
 class TestNRF:
     parallel_run_settings = dcf.get_parallel_run_settings('joshua_linux')
 
-    dfr = nrf.weave_narrative(video_name_1='Ses01F_F',
-                              video_name_2='Ses01F_M',
+    dfr = nrf.weave_narrative(video_1='Ses01F_F',
+                              video_2='Ses01F_M',
                               delay=1,
                               tone=1,
                               speech_rate=1,
