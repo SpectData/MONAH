@@ -10,28 +10,28 @@ from datetime import datetime
 import Python.Data_Preprocessing.config.config as cfg
 
 
-def compute_au_actions(video_name_1, video_name_2, parallel_run_settings):
+def compute_au_actions(video_1, video_2, parallel_run_settings):
     '''
     Compute for the au summary per talkturn
     :return: none
     '''
     # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
     # Mark - add a condition that stops the function from running again if file exists
-    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_au_actions.csv')))):
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_1 + '_' + video_2, 'Stage_2', 'talkturn_au_actions.csv')))):
         return print('Stage 2 Action - AU Exists')
 
     start = datetime.now()
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                        video_name_1 + '_' + video_name_2,
+                                        video_1 + '_' + video_2,
                                         "Stage_2",
                                         "weaved talkturns.csv"))
     open_face_results = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                                 video_name_1 + '_' + video_name_2,
+                                                 video_1 + '_' + video_2,
                                                  "Stage_1",
                                                  "openface_raw.csv"))
     open_face_results['speaker'] = open_face_results.apply(lambda x:
                                                            cfg.parameters_cfg['speaker_1']
-                                                           if x['video_id'] == video_name_1 else
+                                                           if x['video_id'] == video_1 else
                                                            cfg.parameters_cfg['speaker_2'],
                                                            axis=1)
     open_face_results = open_face_results.sort_values(by=['video_id', 'speaker', 'frame'])
@@ -59,11 +59,11 @@ def compute_au_actions(video_name_1, video_name_2, parallel_run_settings):
                              'AU05_c', 'AU17_c', 'AU20_c', 'AU25_c']]
 
     au_actions.to_csv(os.path.join(parallel_run_settings['csv_path'],
-                                   video_name_1 + '_' + video_name_2,
+                                   video_1 + '_' + video_2,
                                    'Stage_2',
                                    "talkturn_au_actions.csv"),
                       index=False)
     print('Stage 2 Action AUs Time: ', datetime.now() - start)
 
 if __name__ == '__main__':
-    compute_au_actions(video_name_1='zoom_F', video_name_2='zoom_M')
+    compute_au_actions(video_1='zoom_F', video_2='zoom_M')

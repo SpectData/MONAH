@@ -9,29 +9,29 @@ from datetime import datetime
 import Python.Data_Preprocessing.config.config as cfg
 
 
-def compute_posiface(video_name_1, video_name_2, parallel_run_settings):
+def compute_posiface(video_1, video_2, parallel_run_settings):
     '''
     Compute for posiface status of the talkturn
     :return: none
     '''
     # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
     # Mark - add a condition that stops the function from running again if file exists
-    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_posiface.csv')))):
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_1 + '_' + video_2, 'Stage_2', 'talkturn_posiface.csv')))):
         return print('Stage 2 Action - Posiface Exists')
 
     start = datetime.now()
     # Load dateframes
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                        video_name_1 + '_' + video_name_2,
+                                        video_1 + '_' + video_2,
                                         "Stage_2",
                                         "weaved talkturns.csv"))
     open_face_results = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                                 video_name_1 + '_' + video_name_2,
+                                                 video_1 + '_' + video_2,
                                                  "Stage_1",
                                                  "openface_raw.csv"))
     open_face_results['speaker'] = open_face_results.apply(lambda x:
                                                            cfg.parameters_cfg['speaker_1']
-                                                           if x['video_id'] == video_name_1 else
+                                                           if x['video_id'] == video_1 else
                                                            cfg.parameters_cfg['speaker_2'],
                                                            axis=1)
     open_face_results = open_face_results.sort_values(by=['video_id', 'frame'])
@@ -51,13 +51,13 @@ def compute_posiface(video_name_1, video_name_2, parallel_run_settings):
     posiface = posiface.reset_index()
     posiface['posiface'] = np.where((posiface['posiface_status'] == posiface[' timestamp']), 1, 0)
     posiface.to_csv(os.path.join(parallel_run_settings['csv_path'],
-                                 video_name_1 + "_" + video_name_2,
+                                 video_1 + "_" + video_2,
                                  "Stage_2",
                                  "talkturn_posiface.csv"),
                     index=False)
     print('Stage 2 Action Posiface Time: ', datetime.now() - start)
 
 if __name__ == '__main__':
-    compute_posiface(video_name_1='Ses01F_F',
-                     video_name_2='Ses01F_M',
+    compute_posiface(video_1='Ses01F_F',
+                     video_2='Ses01F_M',
                      parallel_run_settings=parallel_run_settings)

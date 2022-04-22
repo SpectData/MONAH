@@ -11,29 +11,29 @@ from datetime import datetime
 import Python.Data_Preprocessing.config.config as cfg
 
 
-def compute_smile(video_name_1, video_name_2, parallel_run_settings):
+def compute_smile(video_1, video_2, parallel_run_settings):
     '''
     Compute smile per talkturn
     :return: none
     '''
     # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     # Mark - add a condition that stops the function from running again if file exists
-    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_smile.csv')))):
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_1 + '_' + video_2, 'Stage_2', 'talkturn_smile.csv')))):
         return print('Stage 2 Action - Smile Exists')
 
     start = datetime.now()
     # Load files
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                        video_name_1 + '_' + video_name_2,
+                                        video_1 + '_' + video_2,
                                         "Stage_2",
                                         "weaved talkturns.csv"))
     open_face_results = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                                 video_name_1 + '_' + video_name_2,
+                                                 video_1 + '_' + video_2,
                                                  "Stage_1",
                                                  "openface_raw.csv"))
     open_face_results['speaker'] = open_face_results.apply(lambda x:
                                                            cfg.parameters_cfg['speaker_1']
-                                                           if x['video_id'] == video_name_1 else
+                                                           if x['video_id'] == video_1 else
                                                            cfg.parameters_cfg['speaker_2'],
                                                            axis=1)
     open_face = open_face_results[(open_face_results[' AU06_c'] == 1) &
@@ -59,11 +59,11 @@ def compute_smile(video_name_1, video_name_2, parallel_run_settings):
     smiling_df = smiling_df.groupby(['video_id', 'speaker', 'talkturn no'])['smile'].max().reset_index()
     smiling_df = smiling_df[['video_id', 'speaker', 'talkturn no', 'smile']]
     smiling_df.to_csv(os.path.join(parallel_run_settings['csv_path'],
-                                   video_name_1 + "_" + video_name_2,
+                                   video_1 + "_" + video_2,
                                    "Stage_2",
                                    'talkturn_smile.csv'),
                       index=False)
     print('Stage 2 Action Smile Time: ', datetime.now() - start)
 
 if __name__ == '__main__':
-    compute_smile(video_name_1='Ses01F_F', video_name_2='Ses01F_M')
+    compute_smile(video_1='Ses01F_F', video_2='Ses01F_M')
