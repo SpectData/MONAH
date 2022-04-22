@@ -9,6 +9,7 @@ import pandas as pd
 pd.__version__
 
 import Python.Data_Preprocessing.config.config as cfg
+import Python.Data_Preprocessing.config.dir_config as prs
 
 from tqdm import tqdm
 
@@ -152,5 +153,7 @@ def get_all_blob(video_name_1, video_name_2, parallel_run_settings):
 
 
 if __name__ == '__main__':
-    tone_blob = get_all_blob(video_name_1='Ses01F_F',
-                             video_name_2='Ses01F_M')
+    parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
+    tone_blob = get_all_blob(video_name_1='Ses01F_impro05_F',
+                             video_name_2='Ses01F_impro05_M',
+                             parallel_run_settings=parallel_run_settings)
