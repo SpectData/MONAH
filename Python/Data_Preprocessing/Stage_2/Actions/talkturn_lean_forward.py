@@ -10,28 +10,28 @@ import Python.Data_Preprocessing.config.config as cfg
 import Python.Data_Preprocessing.config.dir_config as prs
 
 
-def compute_lean_forward(video_name_1, video_name_2, parallel_run_settings):
+def compute_lean_forward(video_1, video_2, parallel_run_settings):
     '''
     Compute for head nod status of the talkturn
     :return: none
     '''
     # Mark - add a condition that stops the function from running again if file exists
-    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_leanforward.csv')))):
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_1 + '_' + video_2, 'Stage_2', 'talkturn_leanforward.csv')))):
         return print('Stage 2 Action - Lean Forward Exists')
 
     start = datetime.now()
     # Load dataframes
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                        video_name_1 + '_' + video_name_2,
+                                        video_1 + '_' + video_2,
                                         "Stage_2",
                                         "weaved talkturns.csv"))
     open_face_results = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                                 video_name_1 + '_' + video_name_2,
+                                                 video_1 + '_' + video_2,
                                                  "Stage_1",
                                                  "openface_raw.csv"))
     open_face_results['speaker'] = open_face_results.apply(lambda x:
                                                            cfg.parameters_cfg['speaker_1']
-                                                           if x['video_id'] == video_name_1 else
+                                                           if x['video_id'] == video_1 else
                                                            cfg.parameters_cfg['speaker_2'],
                                                            axis=1)
     open_face_results = open_face_results.sort_values(by=['video_id', 'frame'])
@@ -88,37 +88,38 @@ def compute_lean_forward(video_name_1, video_name_2, parallel_run_settings):
     stable['previous_stable_timestamp'] = stable.groupby('video_id')['timestamp'].shift(1)
     stable['previous_stable_pose_Tz'] = stable.groupby('video_id')['pose_Tz'].shift(1)
     stable['stable_num'] = stable.groupby('video_id')['frame'].rank(method="first", ascending=True)
+    stable['magnitude'] = stable.previous_stable_pose_Tz - stable.pose_Tz
 
     # select cycles with stable points varying by at least 8cm
-    #stable['eligible'] = stable.apply(lambda x: 1 if x['previous_stable_pose_Tz'] - x['pose_Tz'] >= 80 else 0, axis=1)
     stable['eligible'] = np.where(stable.previous_stable_pose_Tz - stable.pose_Tz >= 80, 1, 0)
-    #stable['magnitude'] = stable.apply(lambda x: x['previous_stable_pose_Tz'] - x['pose_Tz'], axis=1)
-    stable['magnitude'] = stable.previous_stable_pose_Tz - stable.pose_Tz
-    #stable['speaker'] = stable.apply(lambda x: cfg.parameters_cfg['speaker_1']
-    #if x['video_id'] == video_name_1 else cfg.parameters_cfg['speaker_2'], axis=1)
-    stable['speaker'] = np.where(stable.video_id == video_name_1,
+    stable = stable[stable['eligible'] == 1]
+    stable['speaker'] = np.where(stable.video_id == video_1,
                                  cfg.parameters_cfg['speaker_1'],
                                  cfg.parameters_cfg['speaker_2'])
 
-    base = stable[['video_id', 'speaker', 'previous_stable_timestamp', 'timestamp', 'eligible', 'magnitude']]
-    base.columns = ['video_id', 'speaker', 'start_time', 'end_time', 'eligible', 'magnitude']
+    base = stable[['video_id', 'speaker', 'previous_stable_timestamp', 'timestamp', 'magnitude']]
+    base.columns = ['video_id', 'speaker', 'lf_start_time', 'lf_end_time', 'magnitude']
 
+    # combine to talkturn table
     for_lean_forward = pd.merge(talkturn, base, how="left", on=["video_id", "speaker"])
-    for_lean_forward['time_status'] = np.where((for_lean_forward['start time'] <=
-                                                for_lean_forward['start_time']) &
-                                               (for_lean_forward['end time'] >=
-                                                for_lean_forward['end_time']), 1, 0)
-    for_lean_forward = for_lean_forward[for_lean_forward['time_status'] == 1]
+    for_lean_forward['time_status'] = np.where(
+        (for_lean_forward['lf_start_time'] <= for_lean_forward['end time']) &
+        (for_lean_forward['lf_end_time'] >= for_lean_forward['start time']) &
+        (for_lean_forward['lf_end_time'] > for_lean_forward['lf_start_time']), 1, 0)
+    for_lean_forward = for_lean_forward[(for_lean_forward['time_status'] == 1) & (abs(for_lean_forward['magnitude']) >= 150)]
     for_lean_forward = for_lean_forward.groupby(['video_id', 'audio_id', 'speaker', 'talkturn no',
                                                  'text', 'start time', 'end time']).agg({
-        'eligible': sum, 'time_status': sum
+        'time_status': sum
     }).reset_index()
-    for_lean_forward['leanforward'] = np.where((for_lean_forward['eligible'] > 0), 1, 0)
+    for_lean_forward['leanforward'] = np.where((for_lean_forward['time_status'] > 0), 1, 0)
+
+    # finalize lean forward table
     leanforward = pd.merge(talkturn, for_lean_forward, how="left", on=["video_id", "speaker", "talkturn no"])
     leanforward = leanforward[['video_id', 'speaker', 'talkturn no', 'leanforward']]
     leanforward['leanforward'] = leanforward.leanforward.apply(lambda x: 1 if x == 1 else 0)
+
     leanforward.to_csv(os.path.join(parallel_run_settings['csv_path'],
-                                video_name_1 + "_" + video_name_2,
+                                    video_1 + "_" + video_2,
                                 "Stage_2",
                                 "talkturn_leanforward.csv"),
                    index=False)
@@ -126,6 +127,10 @@ def compute_lean_forward(video_name_1, video_name_2, parallel_run_settings):
 
 if __name__ == '__main__':
     parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
-    compute_lean_forward(video_name_1='Ses01F_F',
-                         video_name_2='Ses01F_M',
+    compute_lean_forward(video_1='Ses01F_impro04_F',
+                         video_2='Ses01F_impro04_M',
                          parallel_run_settings=parallel_run_settings)
+
+
+
+
