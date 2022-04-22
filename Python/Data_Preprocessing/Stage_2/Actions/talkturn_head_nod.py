@@ -11,28 +11,29 @@ import Python.Data_Preprocessing.config.config as cfg
 import Python.Data_Preprocessing.config.dir_config as prs
 
 
-def compute_head_nod(video_name_1, video_name_2, parallel_run_settings):
+def compute_head_nod(video_1, video_2, parallel_run_settings):
     '''
     Compute for head nod status of the talkturn
     :return: none
     '''
     # Mark - add a condition that stops the function from running again if file exists
-    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_headnod.csv')))):
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'],
+                      video_1 + '_' + video_2, 'Stage_2', 'talkturn_headnod.csv')))):
         return print('Stage 2 Action - Head Nod Exists')
 
     start = datetime.now()
     # Load dataframes
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                        video_name_1 + '_' + video_name_2,
+                                        video_1 + '_' + video_2,
                                         "Stage_2",
                                         "weaved talkturns.csv"))
     open_face_results = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                                 video_name_1 + '_' + video_name_2,
+                                                 video_1 + '_' + video_2,
                                                  "Stage_1",
                                                  "openface_raw.csv"))
     open_face_results['speaker'] = open_face_results.apply(lambda x:
                                                            cfg.parameters_cfg['speaker_1']
-                                                           if x['video_id'] == video_name_1 else
+                                                           if x['video_id'] == video_1 else
                                                            cfg.parameters_cfg['speaker_2'],
                                                            axis=1)
     open_face_results = open_face_results.sort_values(by=['video_id', 'frame'])
@@ -189,29 +190,31 @@ def compute_head_nod(video_name_1, video_name_2, parallel_run_settings):
     base_7 = pd.merge(base_6, temp, how='inner', on=['video_id', 'group_num'])
     base_7 = base_7[base_7['state_a2'] == 'stable']
     base_7 = base_7.groupby(['video_id', 'group_num']).agg({'timestamp': [min, max]}).reset_index()
-    base_7.columns = ['video_id', 'group_num', 'start_time', 'end_time']
-    base_7 = base_7[(base_7['end_time'] - base_7['start_time'] >= 1) &
-                    (base_7['end_time'] - base_7['start_time'] <= 1.4)]
+    base_7.columns = ['video_id', 'group_num', 'hn_start_time', 'hn_end_time']
+    base_7 = base_7[(base_7['hn_end_time'] - base_7['hn_start_time'] >= 1) &
+                    (base_7['hn_end_time'] - base_7['hn_start_time'] <= 1.4)]
     # Mark - changed the formula for getting speaker
-    base_7['speaker'] = np.where(base_7.video_id == video_name_1, cfg.parameters_cfg['speaker_1'], cfg.parameters_cfg['speaker_2'])
+    base_7['speaker'] = np.where(base_7.video_id == video_1, cfg.parameters_cfg['speaker_1'], cfg.parameters_cfg['speaker_2'])
+
     #base_7['speaker'] = base_7.apply(lambda x: cfg.parameters_cfg['speaker_1']
     #if x['video_id'] == video_name_1 else cfg.parameters_cfg['speaker_2'], axis=1)
     for_head_nod = pd.merge(talkturn, base_7, how="left", on=["video_id", "speaker"])
-    for_head_nod['time_status'] = np.where((for_head_nod['start time'] <=
-                                            for_head_nod['start_time']) &
-                                           (for_head_nod['end time'] >=
-                                            for_head_nod['end_time']), 1, 0)
+    for_head_nod['time_status'] = np.where(
+        (for_head_nod['hn_start_time'] <= for_head_nod['end time']) &
+        (for_head_nod['hn_end_time'] >= for_head_nod['start time']) &
+        (for_head_nod['hn_end_time'] > for_head_nod['hn_start_time']), 1, 0)
     for_head_nod['headnod'] = np.where((for_head_nod['time_status'] == 1), 1, 0)
     headnod = for_head_nod[['video_id', 'speaker', 'talkturn no', 'headnod']]
+
     headnod.to_csv(os.path.join(parallel_run_settings['csv_path'],
-                                video_name_1 + "_" + video_name_2,
+                                video_1 + "_" + video_2,
                                 "Stage_2",
                                 "talkturn_headnod.csv"),
-                   index=False)
+                                index=False)
     print('Stage 2 Action HeadNod Time: ', datetime.now() - start)
 
 if __name__ == '__main__':
     parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
-    compute_head_nod(video_name_1='Ses04F_impro02_F',
-                     video_name_2='Ses04F_impro02_M',
+    compute_head_nod(video_1='Ses04F_impro02_F',
+                     video_2='Ses04F_impro02_M',
                      parallel_run_settings=parallel_run_settings)
