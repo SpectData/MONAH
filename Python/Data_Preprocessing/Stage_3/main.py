@@ -93,8 +93,8 @@ def weave_vpa(video_1, video_2, delay, tone, speech_rate, au_action, posiface, s
 if __name__ == '__main__':
     parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
 
-    weave_vpa(video_1='Ses04F_impro02_F',
-              video_2='Ses04F_impro02_M',
+    weave_vpa(video_1='Ses03M_impro07_M',
+              video_2='Ses03M_impro07_F',
               delay=1,
               tone=1,
               speech_rate=1,
