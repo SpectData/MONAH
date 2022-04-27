@@ -193,11 +193,9 @@ def compute_head_nod(video_1, video_2, parallel_run_settings):
     base_7.columns = ['video_id', 'group_num', 'hn_start_time', 'hn_end_time']
     base_7 = base_7[(base_7['hn_end_time'] - base_7['hn_start_time'] >= 1) &
                     (base_7['hn_end_time'] - base_7['hn_start_time'] <= 1.4)]
-    # Mark - changed the formula for getting speaker
-    base_7['speaker'] = np.where(base_7.video_id == video_1, cfg.parameters_cfg['speaker_1'], cfg.parameters_cfg['speaker_2'])
+    base_7['speaker'] = np.where(base_7.video_id == video_1,
+                                 cfg.parameters_cfg['speaker_1'], cfg.parameters_cfg['speaker_2'])
 
-    #base_7['speaker'] = base_7.apply(lambda x: cfg.parameters_cfg['speaker_1']
-    #if x['video_id'] == video_name_1 else cfg.parameters_cfg['speaker_2'], axis=1)
     for_head_nod = pd.merge(talkturn, base_7, how="left", on=["video_id", "speaker"])
     for_head_nod['time_status'] = np.where(
         (for_head_nod['hn_start_time'] <= for_head_nod['end time']) &
@@ -211,10 +209,11 @@ def compute_head_nod(video_1, video_2, parallel_run_settings):
                                 "Stage_2",
                                 "talkturn_headnod.csv"),
                                 index=False)
+
     print('Stage 2 Action HeadNod Time: ', datetime.now() - start)
 
 if __name__ == '__main__':
     parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
-    compute_head_nod(video_1='Ses04F_impro02_F',
-                     video_2='Ses04F_impro02_M',
+    compute_head_nod(video_1='Ses03M_impro07_M',
+                     video_2='Ses03M_impro07_F',
                      parallel_run_settings=parallel_run_settings)
