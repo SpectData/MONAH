@@ -22,18 +22,19 @@ def insert_to_table(dfr, dest_dir, table_name):
     dfr.to_csv(os.path.join(dest_dir, table_name + ".csv"), index=False)
     print("\nSuccessfully inserted data to " + table_name + ".csv")
 
-def run_google_speech_to_text(video_name_1, video_name_2, parallel_run_settings):
+def run_google_speech_to_text(video_1, video_2, parallel_run_settings):
     '''
     Run google speech to text
     :return: none
     '''
     # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
     # Mark - add a condition that stops the function from running again if file exists
-    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_1', 'word_transcripts.csv')))):
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'],
+                      video_1 + '_' + video_2, 'Stage_1', 'word_transcripts.csv')))):
         return print('Stage 1 Google Speech-to-Text File Exists')
 
     bucket = "marriane-bucket"
-    audio_list = dw.download_audio(video_name_1, video_name_2)
+    audio_list = dw.download_audio(video_1, video_2)
     print(audio_list)
     utterance = pd.DataFrame()
     word = pd.DataFrame()
@@ -49,7 +50,7 @@ def run_google_speech_to_text(video_name_1, video_name_2, parallel_run_settings)
         word = word.append(result[1])
 
     dest_dir = os.path.join(parallel_run_settings['csv_path'],
-                            video_name_1 + '_' + video_name_2, 'Stage_1')
+                            video_1 + '_' + video_2, 'Stage_1')
 
     if not os.path.exists(dest_dir):
         os.makedirs(dest_dir)
@@ -58,12 +59,11 @@ def run_google_speech_to_text(video_name_1, video_name_2, parallel_run_settings)
                     dest_dir=dest_dir,
                     table_name="utterance_transcripts")
     insert_to_table(dfr=word,
-                    dest_dir=os.path.join(parallel_run_settings['csv_path'],
-                                          video_name_1 + '_' + video_name_2, 'Stage_1'),
+                    dest_dir=dest_dir,
                     table_name="word_transcripts")
 
 if __name__ == '__main__':
     parallel_run_settings = cfg.get_parallel_run_settings("marriane_win")
-    run_google_speech_to_text(video_name_1="zoom_F",
-                              video_name_2="zoom_M",
+    run_google_speech_to_text(video_1="zoom_F",
+                              video_2="zoom_M",
                               parallel_run_settings=parallel_run_settings)

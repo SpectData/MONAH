@@ -77,14 +77,14 @@ def analyze_wav(wav_path, parallel_run_settings):
     return emotions
 
 
-def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
+def run_vokaturi(video_1, video_2, parallel_run_settings):
     '''
     Extract vokaturi features and stores in a table
     :return: rows with no emotions
     '''
     # parallel_run_settings = prs.get_parallel_run_settings('marriane_win')
     # Mark - add a condition that stops the function from running again if file exists
-    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_1', 'talkturn_vokaturi.csv')))):
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_1 + '_' + video_2, 'Stage_1', 'talkturn_vokaturi.csv')))):
         return print('Stage 1 Vokaturi File Exists')
 
     sys.path.append(parallel_run_settings['Vokaturi_API_Path'])
@@ -94,7 +94,7 @@ def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
     Vokaturi.load(parallel_run_settings['Vokaturi_Library_Path'])
     print("Analyzed by: %s" % Vokaturi.versionAndLicense())
 
-    cwf.cut_files(video_name_1, video_name_2, parallel_run_settings)
+    cwf.cut_files(video_1, video_2, parallel_run_settings)
     no_emotions = []
     emotions = pd.DataFrame()
 
@@ -113,7 +113,7 @@ def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
                     df_emotions['video_id'] = '_'.join(talkturn_id_complete.split("_")[0:3])
                     df_emotions['speaker'] = df_emotions.apply(lambda x:
                                                                cfg.parameters_cfg['speaker_1']
-                                                               if x['video_id'] == video_name_1
+                                                               if x['video_id'] == video_1
                                                                else cfg.parameters_cfg['speaker_2'],
                                                                axis=1)
                     df_emotions['talkturn no'] = talkturn_id_complete.split("_")[3] #change from 2 to 3
@@ -127,7 +127,7 @@ def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
 
     print(no_emotions)
     insert_df(emotions_df=emotions, dest_dir=os.path.join(parallel_run_settings['csv_path'],
-                                                          video_name_1 + "_" + video_name_2,
+                                                          video_1 + "_" + video_2,
                                                           "Stage_1"))
 
     # Delete files
@@ -142,4 +142,4 @@ def run_vokaturi(video_name_1, video_name_2, parallel_run_settings):
 
 
 if __name__ == '__main__':
-    run_vokaturi(video_name_1="Ses01F_F", video_name_2="Ses01F_M")
+    run_vokaturi(video_1="Ses01F_F", video_2="Ses01F_M")

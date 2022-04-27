@@ -41,23 +41,23 @@ def cut_to_talkturn(file, start_time, end_time, talkturn_no, parallel_run_settin
                                   str(talkturn_no) + '.wav'), format="wav")
 
 
-def cut_files(video_name_1, video_name_2, parallel_run_settings):
+def cut_files(video_1, video_2, parallel_run_settings):
     '''
     cut wav files into smaller wav talkturns
     :return: none
     '''
     # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     dfr = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                   video_name_1 + '_' + video_name_2,
+                                   video_1 + '_' + video_2,
                                    'Stage_2',
                                    "weaved talkturns.csv"))
-    dfr['audio_id'] = dfr.apply(lambda x: video_name_1
+    dfr['audio_id'] = dfr.apply(lambda x: video_1
     if x['speaker'] == cfg.parameters_cfg['speaker_1']
-    else video_name_2, axis=1)
+    else video_2, axis=1)
 
     print(dfr)
 
-    wav_list = [video_name_1+'.wav', video_name_2+'.wav']
+    wav_list = [video_1 + '.wav', video_2 + '.wav']
     #for i in os.listdir(parallel_run_settings['wav_path']):
         #if i.endswith(".wav"):
             #wav_list.append(i)
@@ -78,4 +78,4 @@ def cut_files(video_name_1, video_name_2, parallel_run_settings):
                 continue
 
 if __name__ == '__main__':
-    cut_files(video_name_1='zoom_F', video_name_2='zoom_M')
+    cut_files(video_1='zoom_F', video_2='zoom_M')
