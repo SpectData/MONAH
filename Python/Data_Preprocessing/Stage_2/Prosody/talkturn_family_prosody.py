@@ -48,7 +48,7 @@ def normalize_column_values(table_name, column_name, summary_table):
 
     return dfr
 
-def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
+def combine_prosody_features(video_1, video_2, parallel_run_settings):
     '''
     Combine normalize feature values
     :return: none
@@ -61,21 +61,21 @@ def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
     #    return print('Stage 2 Prosody File Exists')
 
     prosody_start = datetime.now()
-    wpm.extract_speech_rate(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
-    dly.extract_delay(video_name_1, video_name_2, parallel_run_settings=parallel_run_settings)
+    wpm.extract_speech_rate(video_1, video_2, parallel_run_settings=parallel_run_settings)
+    dly.extract_delay(video_1, video_2, parallel_run_settings=parallel_run_settings)
 
     # Load dataframes
     df_wpm = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                      video_name_1 + '_' + video_name_2,
+                                      video_1 + '_' + video_2,
                                       "Stage_2",
                                       "talkturn_wpm.csv"))
     df_delay = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                        video_name_1 + '_' + video_name_2,
+                                        video_1 + '_' + video_2,
                                         "Stage_2",
                                         "talkturn_delay.csv"))
     df_delay['delay_ms'] = df_delay['delay'] * 1000
     df_vokaturi = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                           video_name_1 + '_' + video_name_2,
+                                           video_1 + '_' + video_2,
                                            "Stage_1",
                                            "talkturn_vokaturi.csv"))
 
@@ -120,7 +120,7 @@ def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
 
     dfr = dfr.fillna(0)
     dfr.to_csv(os.path.join(parallel_run_settings['csv_path'],
-                            video_name_1 + '_' + video_name_2,
+                            video_1 + '_' + video_2,
                             "Stage_2",
                             'talkturn_family_prosody.csv'),
                index=False)
@@ -128,5 +128,5 @@ def combine_prosody_features(video_name_1, video_name_2, parallel_run_settings):
     print('Stage 2 Prosody Time: ', datetime.now() - prosody_start)
 
 if __name__ == '__main__':
-    combine_prosody_features(video_name_1='zoom_F',
-                             video_name_2='zoom_M')
+    combine_prosody_features(video_1='zoom_F',
+                             video_2='zoom_M')

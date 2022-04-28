@@ -7,20 +7,20 @@ from datetime import datetime
 import pandas as pd
 
 
-def extract_speech_rate(video_name_1, video_name_2, parallel_run_settings):
+def extract_speech_rate(video_1, video_2, parallel_run_settings):
     '''
     Computes for speech rate per talkturn
     :return: none
     '''
     # parallel_run_settings = prs.get_parallel_run_settings("marriane_win")
     # Mark - add a condition that stops the function from running again if file exists
-    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_name_1 + '_' + video_name_2, 'Stage_2', 'talkturn_wpm.csv')))):
+    if os.path.exists(str(pathlib.Path(os.path.join(parallel_run_settings['csv_path'], video_1 + '_' + video_2, 'Stage_2', 'talkturn_wpm.csv')))):
         return print('Stage 2 Prosody - WPM Exists')
 
     start = datetime.now()
     # Load dataframes
     talkturn = pd.read_csv(os.path.join(parallel_run_settings['csv_path'],
-                                        video_name_1 + '_' + video_name_2,
+                                        video_1 + '_' + video_2,
                                         "Stage_2",
                                         "weaved talkturns.csv"))
     talkturn['wordcount'] = talkturn['text'].str.split().str.len()
@@ -30,10 +30,10 @@ def extract_speech_rate(video_name_1, video_name_2, parallel_run_settings):
 
     wpm = talkturn[['video_id', 'audio_id', 'speaker', 'talkturn no', 'wpm']]
     wpm.to_csv(os.path.join(parallel_run_settings['csv_path'],
-                            video_name_1 + '_' + video_name_2,
+                            video_1 + '_' + video_2,
                             "Stage_2",
                             "talkturn_wpm.csv"), index=False)
     print('Stage 2 Prosody SpeechRate Time: ', datetime.now() - start)
 
 if __name__ == '__main__':
-    extract_speech_rate(video_name_1='Ses01F_F', video_name_2='Ses01F_M')
+    extract_speech_rate(video_1='Ses01F_F', video_2='Ses01F_M')
